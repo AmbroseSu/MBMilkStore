@@ -43,19 +43,35 @@ namespace DataAccessLayer
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<UserRole>(e =>
+            {
+                e.ToTable("UserRole");
+                e.HasKey(x=>x.UserRoleId);
+                e.Property(x=>x.UserRoleName);
+            });
             modelBuilder.Entity<User>(e =>
             {
                 e.ToTable("User");
-                e.HasKey(x => x.Id);
+                e.HasKey(x => x.UserId);
                 e.Property(x => x.Name);
                 e.Property(x => x.Email);
                 e.Property(x => x.Password);
-                e.Property(x => x.Role);
+                e.HasOne(x => x.UserRole)
+                    .WithMany(x => x.ListUser)
+                    .HasForeignKey(x => x.RoleId)
+                    .HasConstraintName("FK_User_UserRole");
+            });
+            modelBuilder.Entity<Voucher>(e =>
+            {
+                e.ToTable("Voucher");
+                e.HasKey(x=>x.VoucherId);
+                e.Property(x=>x.VoucherName);
+                e.Property(x=>x.VoucherValue);
             });
             modelBuilder.Entity<Order>(e =>
             {
                 e.ToTable("Order");
-                e.HasKey(x => x.Id);
+                e.HasKey(x => x.OrderId);
                 e.Property(x => x.OrderDate);
                 e.Property(x => x.Status);
                 e.Property(x => x.OrderTotalAmount);
@@ -63,12 +79,15 @@ namespace DataAccessLayer
                     .WithMany(x => x.ListOrder)
                     .HasForeignKey(x => x.UserId)
                     .HasConstraintName("FK_Order_User");
-
+                e.HasOne(x => x.Voucher)
+                    .WithMany(x => x.ListOrders)
+                    .HasForeignKey(x => x.VoucherId)
+                    .HasConstraintName("FK_Order_Voucher");
             });
             modelBuilder.Entity<OrderDetail>(e =>
             {
                 e.ToTable("OrderDetail");
-                e.HasKey(x => x.Id);
+                e.HasKey(x => x.OrderDetailId);
                 e.Property(x => x.ProductQuantity);
                 e.Property(x => x.ProductPrice);
                 e.HasOne(x => x.Order)
@@ -83,7 +102,7 @@ namespace DataAccessLayer
             modelBuilder.Entity<Product>(e =>
             {
                 e.ToTable("Product");
-                e.HasKey(x => x.Id);
+                e.HasKey(x => x.ProductId);
                 e.Property(x => x.Name);
                 e.Property(x => x.Description);
                 e.Property(x => x.Price);
@@ -101,13 +120,13 @@ namespace DataAccessLayer
             modelBuilder.Entity<ProductBrand>(e =>
             {
                 e.ToTable("ProductBrand");
-                e.HasKey(x => x.Id);
+                e.HasKey(x => x.ProductBrandId);
                 e.Property(x => x.Name);
             });
             modelBuilder.Entity<ProductCategory>(e =>
             {
                 e.ToTable("ProductCategory");
-                e.HasKey(x => x.Id);
+                e.HasKey(x => x.ProductCategoryId);
                 e.Property(x => x.Name);
             });
         }

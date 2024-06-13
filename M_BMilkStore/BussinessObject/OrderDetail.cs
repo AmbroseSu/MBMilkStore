@@ -12,7 +12,7 @@ namespace BussinessObject
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Key]
-        public int Id { get; set; }
+        public int OrderDetailId { get; set; }
         public int ProductQuantity { get; set; }
         public double ProductPrice { get; set; }
         public int OrderId { get; set; }

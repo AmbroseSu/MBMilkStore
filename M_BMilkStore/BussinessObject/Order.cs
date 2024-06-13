@@ -12,12 +12,14 @@ namespace BussinessObject
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Key]
-        public int Id { get; set; }
+        public int OrderId { get; set; }
         public DateTime OrderDate { get; set; }
         public bool Status { get; set; }
         public float OrderTotalAmount { get; set; }
         public int UserId { get; set; }
+        public int VoucherId { get; set; }
         public virtual User? User { get; set; }
+        public virtual Voucher? Voucher { get; set; }
         public virtual ICollection<OrderDetail>? ListOrderDetail { get; set; }
     }
 }

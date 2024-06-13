@@ -24,11 +24,11 @@ namespace DataAccessLayer.Migrations
 
             modelBuilder.Entity("BussinessObject.Order", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("OrderId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderId"));
 
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime2");
@@ -42,20 +42,25 @@ namespace DataAccessLayer.Migrations
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.Property<int>("VoucherId")
+                        .HasColumnType("int");
+
+                    b.HasKey("OrderId");
 
                     b.HasIndex("UserId");
+
+                    b.HasIndex("VoucherId");
 
                     b.ToTable("Order", (string)null);
                 });
 
             modelBuilder.Entity("BussinessObject.OrderDetail", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("OrderDetailId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderDetailId"));
 
                     b.Property<int>("OrderId")
                         .HasColumnType("int");
@@ -69,7 +74,7 @@ namespace DataAccessLayer.Migrations
                     b.Property<int>("ProductQuantity")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.HasKey("OrderDetailId");
 
                     b.HasIndex("OrderId");
 
@@ -80,11 +85,11 @@ namespace DataAccessLayer.Migrations
 
             modelBuilder.Entity("BussinessObject.Product", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("ProductId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductId"));
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -107,7 +112,7 @@ namespace DataAccessLayer.Migrations
                     b.Property<int>("ProductCategoryId")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.HasKey("ProductId");
 
                     b.HasIndex("ProductBrandId");
 
@@ -118,45 +123,45 @@ namespace DataAccessLayer.Migrations
 
             modelBuilder.Entity("BussinessObject.ProductBrand", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("ProductBrandId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductBrandId"));
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
+                    b.HasKey("ProductBrandId");
 
                     b.ToTable("ProductBrand", (string)null);
                 });
 
             modelBuilder.Entity("BussinessObject.ProductCategory", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("ProductCategoryId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductCategoryId"));
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
+                    b.HasKey("ProductCategoryId");
 
                     b.ToTable("ProductCategory", (string)null);
                 });
 
             modelBuilder.Entity("BussinessObject.User", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("UserId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"));
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -170,13 +175,52 @@ namespace DataAccessLayer.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Role")
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
+
+                    b.HasKey("UserId");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("User", (string)null);
+                });
+
+            modelBuilder.Entity("BussinessObject.UserRole", b =>
+                {
+                    b.Property<int>("UserRoleId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserRoleId"));
+
+                    b.Property<string>("UserRoleName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
+                    b.HasKey("UserRoleId");
 
-                    b.ToTable("User", (string)null);
+                    b.ToTable("UserRole", (string)null);
+                });
+
+            modelBuilder.Entity("BussinessObject.Voucher", b =>
+                {
+                    b.Property<int>("VoucherId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("VoucherId"));
+
+                    b.Property<string>("VoucherName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("VoucherValue")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("VoucherId");
+
+                    b.ToTable("Voucher", (string)null);
                 });
 
             modelBuilder.Entity("BussinessObject.Order", b =>
@@ -188,7 +232,16 @@ namespace DataAccessLayer.Migrations
                         .IsRequired()
                         .HasConstraintName("FK_Order_User");
 
+                    b.HasOne("BussinessObject.Voucher", "Voucher")
+                        .WithMany("ListOrders")
+                        .HasForeignKey("VoucherId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_Order_Voucher");
+
                     b.Navigation("User");
+
+                    b.Navigation("Voucher");
                 });
 
             modelBuilder.Entity("BussinessObject.OrderDetail", b =>
@@ -233,6 +286,18 @@ namespace DataAccessLayer.Migrations
                     b.Navigation("ProductCategory");
                 });
 
+            modelBuilder.Entity("BussinessObject.User", b =>
+                {
+                    b.HasOne("BussinessObject.UserRole", "UserRole")
+                        .WithMany("ListUser")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_User_UserRole");
+
+                    b.Navigation("UserRole");
+                });
+
             modelBuilder.Entity("BussinessObject.Order", b =>
                 {
                     b.Navigation("ListOrderDetail");
@@ -256,6 +321,16 @@ namespace DataAccessLayer.Migrations
             modelBuilder.Entity("BussinessObject.User", b =>
                 {
                     b.Navigation("ListOrder");
+                });
+
+            modelBuilder.Entity("BussinessObject.UserRole", b =>
+                {
+                    b.Navigation("ListUser");
+                });
+
+            modelBuilder.Entity("BussinessObject.Voucher", b =>
+                {
+                    b.Navigation("ListOrders");
                 });
 #pragma warning restore 612, 618
         }
