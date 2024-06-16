@@ -56,6 +56,8 @@ namespace DataAccessLayer
                 e.Property(x => x.Name);
                 e.Property(x => x.Email);
                 e.Property(x => x.Password);
+                e.Property(x => x.Status);
+                e.Property(x => x.IsDeleted);
                 e.HasOne(x => x.UserRole)
                     .WithMany(x => x.ListUser)
                     .HasForeignKey(x => x.RoleId)
@@ -99,6 +101,17 @@ namespace DataAccessLayer
                     .HasForeignKey(x => x.ProductId)
                     .HasConstraintName("FK_OrderDetail_Product");
             });
+            modelBuilder.Entity<ProductLine>(e =>
+            {
+                e.ToTable("ProductLine");
+                e.HasKey(x => x.ProductLineId);
+                e.Property(x=>x.Quantity);
+                e.Property(x=>x.ExpiredDate);
+                e.HasOne(x => x.Product)
+                    .WithMany(x => x.ListProductLine)
+                    .HasForeignKey(x => x.ProductId)
+                    .HasConstraintName("FK_ProductLine_Product");
+            });
             modelBuilder.Entity<Product>(e =>
             {
                 e.ToTable("Product");
@@ -107,6 +120,8 @@ namespace DataAccessLayer
                 e.Property(x => x.Description);
                 e.Property(x => x.Price);
                 e.Property(x => x.Image);
+                e.Property(x => x.Status);
+                e.Property(x => x.IsDeleted);
                 e.HasOne(x => x.ProductBrand)
                     .WithMany(x => x.ListProduct)
                     .HasForeignKey(x => x.ProductBrandId)

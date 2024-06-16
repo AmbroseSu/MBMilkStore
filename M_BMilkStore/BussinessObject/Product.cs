@@ -13,13 +13,17 @@ namespace BussinessObject
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Key]
         public int ProductId { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
+        public string? Name { get; set; }
+        public string? Description { get; set; }
         public double Price { get; set; }
-        public string Image { get; set; }
+        public string? Image { get; set; }
+        public bool? Status {  get; set; }
+        public bool? IsDeleted { get; set; }
         public int ProductBrandId { get; set; }
         public int ProductCategoryId { get; set; }
-        public virtual ICollection<OrderDetail> ListOrderDetail { get; set; }
+        
+        public virtual ICollection<ProductLine>? ListProductLine { get; set; }
+        public virtual ICollection<OrderDetail>? ListOrderDetail { get; set; }
         public virtual ProductBrand? ProductBrand { get; set; }
         public virtual ProductCategory? ProductCategory { get; set; }
 
