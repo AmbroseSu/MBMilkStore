@@ -37,8 +37,8 @@ namespace DataAccessLayer
              .SetBasePath(Directory.GetCurrentDirectory())
             .AddJsonFile("appsettings.json", true, true)
             .Build();
-            var strConn = /*config["ConnectionStrings:DB"]*/ config.GetConnectionString("DB");
-
+            var strConn = config["ConnectionStrings:DB"] /*config.GetConnectionString("DB")*/;
+            
             return strConn;
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -98,6 +98,18 @@ namespace DataAccessLayer
                     .WithMany(x => x.ListOrderDetail)
                     .HasForeignKey(x => x.ProductId)
                     .HasConstraintName("FK_OrderDetail_Product");
+            });
+            modelBuilder.Entity<ProductLine>(e =>
+            {
+                e.ToTable("ProductLine");
+                e.HasKey(x => x.ProductLineId);
+                e.Property(x => x.Quantity);
+                e.Property(x => x.ExpireDate);
+                e.HasOne(x => x.Product)
+                    .WithMany(x => x.ListProductLine)
+                    .HasForeignKey(x => x.ProductId)
+                    .HasConstraintName("FK_ProductLine_Product");
+
             });
             modelBuilder.Entity<Product>(e =>
             {

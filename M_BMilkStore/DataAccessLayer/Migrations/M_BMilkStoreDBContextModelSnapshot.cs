@@ -99,6 +99,9 @@ namespace DataAccessLayer.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -111,6 +114,9 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<int>("ProductCategoryId")
                         .HasColumnType("int");
+
+                    b.Property<bool>("Status")
+                        .HasColumnType("bit");
 
                     b.HasKey("ProductId");
 
@@ -153,6 +159,30 @@ namespace DataAccessLayer.Migrations
                     b.HasKey("ProductCategoryId");
 
                     b.ToTable("ProductCategory", (string)null);
+                });
+
+            modelBuilder.Entity("BussinessObject.ProductLine", b =>
+                {
+                    b.Property<int>("ProductLineId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductLineId"));
+
+                    b.Property<DateTime>("ExpireDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.HasKey("ProductLineId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("ProductLine", (string)null);
                 });
 
             modelBuilder.Entity("BussinessObject.User", b =>
@@ -286,6 +316,18 @@ namespace DataAccessLayer.Migrations
                     b.Navigation("ProductCategory");
                 });
 
+            modelBuilder.Entity("BussinessObject.ProductLine", b =>
+                {
+                    b.HasOne("BussinessObject.Product", "Product")
+                        .WithMany("ListProductLine")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_ProductLine_Product");
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("BussinessObject.User", b =>
                 {
                     b.HasOne("BussinessObject.UserRole", "UserRole")
@@ -306,6 +348,8 @@ namespace DataAccessLayer.Migrations
             modelBuilder.Entity("BussinessObject.Product", b =>
                 {
                     b.Navigation("ListOrderDetail");
+
+                    b.Navigation("ListProductLine");
                 });
 
             modelBuilder.Entity("BussinessObject.ProductBrand", b =>
