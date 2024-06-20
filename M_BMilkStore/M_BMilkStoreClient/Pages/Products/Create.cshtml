@@ -1,0 +1,66 @@
+﻿@page
+@model M_BMilkStoreClient.Pages.Products.CreateModel
+
+@{
+    ViewData["Title"] = "Create Product";
+}
+
+<h1 class="text-center my-5">Create New Product</h1>
+
+<h4 class="text-center">Product Information</h4>
+<hr />
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <div class="form-group">
+                <label asp-for="Product.Name" class="control-label"></label>
+                <input asp-for="Product.Name" class="form-control" placeholder="Enter product name" />
+                <span asp-validation-for="Product.Name" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Product.Description" class="control-label"></label>
+                <textarea asp-for="Product.Description" class="form-control" rows="4" placeholder="Enter product description"></textarea>
+                <span asp-validation-for="Product.Description" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Product.Price" class="control-label"></label>
+                <input asp-for="Product.Price" class="form-control" placeholder="Enter product price" />
+                <span asp-validation-for="Product.Price" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Product.Image" class="control-label"></label>
+                <input asp-for="Product.Image" class="form-control" placeholder="Enter image URL" />
+                <span asp-validation-for="Product.Image" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Product.ProductBrandId" class="control-label"></label>
+                <select asp-for="Product.ProductBrandId" class="form-control" asp-items="ViewBag.ProductBrandId"></select>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Product.ProductCategoryId" class="control-label"></label>
+                <select asp-for="Product.ProductCategoryId" class="form-control" asp-items="ViewBag.ProductCategoryId"></select>
+            </div>
+
+            <div class="form-group text-center">
+                <input type="submit" value="Create" class="btn btn-primary btn-lg" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="text-center mt-4">
+    <a asp-page="Index" class="btn btn-secondary">Back to List</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

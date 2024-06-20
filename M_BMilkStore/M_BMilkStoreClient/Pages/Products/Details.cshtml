@@ -1,0 +1,65 @@
+﻿@page
+@model M_BMilkStoreClient.Pages.Products.DetailsModel
+
+@{
+    ViewData["Title"] = "Product Details";
+}
+
+<h1 class="text-center my-5">Product Details</h1>
+
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <h4 class="card-title">Product Information</h4>
+        </div>
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-3 font-weight-bold">
+                    @Html.DisplayNameFor(model => model.Product.Name)
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.Product.Name)
+                </dd>
+
+                <dt class="col-sm-3 font-weight-bold">
+                    @Html.DisplayNameFor(model => model.Product.Description)
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.Product.Description)
+                </dd>
+
+                <dt class="col-sm-3 font-weight-bold">
+                    @Html.DisplayNameFor(model => model.Product.Price)
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.Product.Price)
+                </dd>
+
+                <dt class="col-sm-3 font-weight-bold">
+                    @Html.DisplayNameFor(model => model.Product.Image)
+                </dt>
+                <dd class="col-sm-9">
+                    <img src="@Model.Product.Image" alt="Product Image" class="img-thumbnail" style="max-width: 150px; max-height: 150px;" />
+                </dd>
+
+                <dt class="col-sm-3 font-weight-bold">
+                    @Html.DisplayNameFor(model => model.Product.ProductBrand)
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.Product.ProductBrand.Name)
+                </dd>
+
+                <dt class="col-sm-3 font-weight-bold">
+                    @Html.DisplayNameFor(model => model.Product.ProductCategory)
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.Product.ProductCategory.Name)
+                </dd>
+            </dl>
+        </div>
+        <div class="card-footer text-center">
+            <a asp-page="./Edit" asp-route-id="@Model.Product.ProductId" class="btn btn-primary">Edit</a>
+            <a asp-page="./Index" class="btn btn-secondary ml-2">Back to List</a>
+        </div>
+    </div>
+</div>

@@ -49,8 +49,8 @@ namespace DataAccessLayer
             modelBuilder.Entity<UserRole>(e =>
             {
                 e.ToTable("UserRole");
-                e.HasKey(x=>x.UserRoleId);
-                e.Property(x=>x.UserRoleName);
+                e.HasKey(x => x.UserRoleId);
+                e.Property(x => x.UserRoleName);
             });
             modelBuilder.Entity<User>(e =>
             {
@@ -69,9 +69,9 @@ namespace DataAccessLayer
             modelBuilder.Entity<Voucher>(e =>
             {
                 e.ToTable("Voucher");
-                e.HasKey(x=>x.VoucherId);
-                e.Property(x=>x.VoucherName);
-                e.Property(x=>x.VoucherValue);
+                e.HasKey(x => x.VoucherId);
+                e.Property(x => x.VoucherName);
+                e.Property(x => x.VoucherValue);
             });
             modelBuilder.Entity<Order>(e =>
             {
@@ -108,8 +108,8 @@ namespace DataAccessLayer
             {
                 e.ToTable("ProductLine");
                 e.HasKey(x => x.ProductLineId);
-                e.Property(x=>x.Quantity);
-                e.Property(x=>x.ExpiredDate);
+                e.Property(x => x.Quantity);
+                e.Property(x => x.ExpiredDate);
                 e.HasOne(x => x.Product)
                     .WithMany(x => x.ListProductLine)
                     .HasForeignKey(x => x.ProductId)
