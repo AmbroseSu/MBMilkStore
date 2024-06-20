@@ -20,7 +20,7 @@ namespace M_BMilkStoreClient.Pages.Products
             _productService = productService;
         }
 
-        public IList<Product> Product { get;set; } = default!;
+        public IList<Product> Product { get; set; } = default!;
 
         public async Task OnGetAsync(string searchString)
         {
