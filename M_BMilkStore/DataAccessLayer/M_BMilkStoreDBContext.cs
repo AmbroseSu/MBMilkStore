@@ -24,6 +24,9 @@ namespace DataAccessLayer
         public virtual DbSet<Product> Products { get; set; }
         public virtual DbSet<ProductBrand> ProductBrands { get; set; }
         public virtual DbSet<ProductCategory> ProductCategories { get; set; }
+        public virtual DbSet<Voucher> Vouchers { get; set; }
+        public virtual DbSet<ProductLine> ProductLines { get; set; }
+        public virtual DbSet<UserRole> UserRoles { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
