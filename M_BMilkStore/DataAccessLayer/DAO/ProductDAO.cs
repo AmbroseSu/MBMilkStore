@@ -36,7 +36,7 @@ namespace DataAccessLayer.DAO
             {
                 using var context = new M_BMilkStoreDBContext();
                 listProduct = await context.Products
-                    .Where(p => p.Status == true && p.IsDelete == false)
+                    .Where(p => p.Status == true && p.IsDeleted == false)
                     .Include(p => p.ProductBrand)
                     .Include(p => p.ProductCategory)
                     .ToListAsync();
@@ -86,7 +86,7 @@ namespace DataAccessLayer.DAO
                 return await context.Products
                     .Include(p => p.ProductBrand)
                     .Include(p => p.ProductCategory)
-                    .FirstOrDefaultAsync(p => p.ProductId == id && p.Status && !p.IsDelete);
+                    .FirstOrDefaultAsync(p => p.ProductId == id && (p.Status ?? false) && !(p.IsDeleted ?? true));
             }
             catch (Exception ex)
             {
@@ -100,7 +100,7 @@ namespace DataAccessLayer.DAO
             {
                 using var context = new M_BMilkStoreDBContext();
                 return await context.Products
-                    .Where(p => p.Name.Contains(name) && p.Status && !p.IsDelete)
+                    .Where(p => p.Name.Contains(name) && (p.Status ?? false) && (!p.IsDeleted ?? true))
                     .Include(p => p.ProductBrand)
                     .Include(p => p.ProductCategory)
                     .ToListAsync();
@@ -111,13 +111,14 @@ namespace DataAccessLayer.DAO
             }
         }
 
-        public async Task AddProduct(Product product, ICollection<ProductLine> productLines)
+        public async Task AddProduct(Product product)
         {
             using var context = new M_BMilkStoreDBContext();
             try
             {
                 await context.Products.AddAsync(product);
-                product.IsDelete = false;
+                product.Status = true;
+                product.IsDeleted = false;
                 product.ListOrderDetail = null;
                 product.ListProductLine = null;
                 await context.SaveChangesAsync();
@@ -139,7 +140,7 @@ namespace DataAccessLayer.DAO
                 }
                 else
                 {
-                    product.IsDelete = true;
+                    product.IsDeleted = true;
                     await context.SaveChangesAsync();
                 }
             }
@@ -153,9 +154,9 @@ namespace DataAccessLayer.DAO
             try
             {
                 using var context = new M_BMilkStoreDBContext();
+                product.IsDeleted = false ;
                 context.Entry(product).State = EntityState.Modified;
                 await context.SaveChangesAsync();
-
             }
             catch (Exception ex)
             {
