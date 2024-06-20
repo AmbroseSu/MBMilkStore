@@ -24,6 +24,9 @@ namespace DataAccessLayer
         public virtual DbSet<Product> Products { get; set; }
         public virtual DbSet<ProductBrand> ProductBrands { get; set; }
         public virtual DbSet<ProductCategory> ProductCategories { get; set; }
+        public virtual DbSet<Voucher> Vouchers { get; set; }
+        public virtual DbSet<ProductLine> ProductLines { get; set; }
+        public virtual DbSet<UserRole> UserRoles { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -37,8 +40,8 @@ namespace DataAccessLayer
              .SetBasePath(Directory.GetCurrentDirectory())
             .AddJsonFile("appsettings.json", true, true)
             .Build();
-            var strConn = config["ConnectionStrings:DB"] /*config.GetConnectionString("DB")*/;
-            
+            var strConn = /*config["ConnectionStrings:DB"]*/ config.GetConnectionString("DB");
+
             return strConn;
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -46,8 +49,8 @@ namespace DataAccessLayer
             modelBuilder.Entity<UserRole>(e =>
             {
                 e.ToTable("UserRole");
-                e.HasKey(x=>x.UserRoleId);
-                e.Property(x=>x.UserRoleName);
+                e.HasKey(x => x.UserRoleId);
+                e.Property(x => x.UserRoleName);
             });
             modelBuilder.Entity<User>(e =>
             {
@@ -56,6 +59,8 @@ namespace DataAccessLayer
                 e.Property(x => x.Name);
                 e.Property(x => x.Email);
                 e.Property(x => x.Password);
+                e.Property(x => x.Status);
+                e.Property(x => x.IsDeleted);
                 e.HasOne(x => x.UserRole)
                     .WithMany(x => x.ListUser)
                     .HasForeignKey(x => x.RoleId)
@@ -64,9 +69,9 @@ namespace DataAccessLayer
             modelBuilder.Entity<Voucher>(e =>
             {
                 e.ToTable("Voucher");
-                e.HasKey(x=>x.VoucherId);
-                e.Property(x=>x.VoucherName);
-                e.Property(x=>x.VoucherValue);
+                e.HasKey(x => x.VoucherId);
+                e.Property(x => x.VoucherName);
+                e.Property(x => x.VoucherValue);
             });
             modelBuilder.Entity<Order>(e =>
             {
@@ -104,12 +109,11 @@ namespace DataAccessLayer
                 e.ToTable("ProductLine");
                 e.HasKey(x => x.ProductLineId);
                 e.Property(x => x.Quantity);
-                e.Property(x => x.ExpireDate);
+                e.Property(x => x.ExpiredDate);
                 e.HasOne(x => x.Product)
                     .WithMany(x => x.ListProductLine)
                     .HasForeignKey(x => x.ProductId)
                     .HasConstraintName("FK_ProductLine_Product");
-
             });
             modelBuilder.Entity<Product>(e =>
             {
@@ -119,6 +123,8 @@ namespace DataAccessLayer
                 e.Property(x => x.Description);
                 e.Property(x => x.Price);
                 e.Property(x => x.Image);
+                e.Property(x => x.Status);
+                e.Property(x => x.IsDeleted);
                 e.HasOne(x => x.ProductBrand)
                     .WithMany(x => x.ListProduct)
                     .HasForeignKey(x => x.ProductBrandId)
