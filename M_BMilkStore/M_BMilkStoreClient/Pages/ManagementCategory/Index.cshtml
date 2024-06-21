@@ -1,0 +1,50 @@
+﻿@page
+@model M_BMilkStoreClient.Pages.ManagementCategory.IndexModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-page="Create">Create New</a>
+</p>
+<table class="table">
+    @if (!string.IsNullOrEmpty(Model.MessageError))
+    {
+        <div class="alert alert-danger" role="alert">
+            @Model.MessageError
+        </div>
+    }
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ProductCategory[0].Name)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if(Model.ProductCategory != null)
+        {
+            @foreach (var item in Model.ProductCategory) {
+             <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                <a asp-page="./Edit" asp-route-id="@item.ProductCategoryId">Edit</a> |
+                <a asp-page="./Details" asp-route-id="@item.ProductCategoryId">Details</a> |
+                <a asp-page="./Delete" asp-route-id="@item.ProductCategoryId">Delete</a>
+            </td>
+        </tr>
+            }
+        }
+        else
+        {
+            <p>No results found for your search criteria.</p>
+        }
+
+    </tbody>
+</table>
