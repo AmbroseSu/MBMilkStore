@@ -1,0 +1,173 @@
+﻿@page
+@model M_BMilkStoreClient.Pages.CartModel
+@{
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>@ViewData["Title"] - My ASP.NET Application</title>
+    <link rel="stylesheet" href="~/css/ShoppingCart.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <style>
+        .cart-items-container {
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <section class="h-100 h-custom" style="background-color: #d2c9ff;">
+        <div class="container py-5 h-100">
+            <div class="row d-flex justify-content-center align-items-center h-100">
+                <div class="col-12">
+                    <div class="card card-registration card-registration-2" style="border-radius: 15px;">
+                        <div class="card-body p-0">
+                            <div class="row g-0">
+                                <div class="col-lg-8">
+                                    <div class="p-5 h-100 cart-items-container">
+                                        <div class="d-flex justify-content-center align-items-center mb-5">
+                                            <h1 class="fw-bold mb-0">Shopping Cart</h1>
+                                        </div>
+                                        @{
+                                            double TotalPrice = 0;
+                                            int TotalItems = 0;
+                                        }
+                                        @foreach (var cartItem in Model.Carts)
+                                        {
+                                            <hr class="my-4">
+                                            <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                                <div class="col-md-2 col-lg-2 col-xl-2">
+                                                    <img src="@cartItem.Product.Image" alt="Product Image"
+                                                         class="img-fluid rounded-3">
+                                                </div>
+                                                <div class="col-md-3 col-lg-3 col-xl-3">
+                                                    <h6 class="text-muted">@cartItem.Product.Name</h6>
+                                                    <h6 class="mb-0">@cartItem.Product.Description</h6>
+                                                </div>
+                                                <div class="col-md-3 col-lg-3 col-xl-2 d-flex">
+                                                    <button class="btn btn-link px-2" onclick="updateQuantity(@cartItem.Product.ProductId, @cartItem.Quantity - 1, @cartItem.Product.Price)">
+                                                        <i class="fas fa-minus"></i>
+                                                    </button>
+                                                    <input id="quantityInput-@cartItem.Product.ProductId" min="0" name="quantity" value="@cartItem.Quantity" type="number"
+                                                           class="form-control form-control-sm" oninput="updatePrice(@cartItem.Product.ProductId, @cartItem.Product.Price)">
+                                                    <button class="btn btn-link px-2" onclick="updateQuantity(@cartItem.Product.ProductId, @cartItem.Quantity + 1, @cartItem.Product.Price)">
+                                                        <i class="fas fa-plus"></i>
+                                                    </button>
+                                                </div>
+                                                <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
+                                                    <h6 class="mb-0">€ <span id="totalPrice-@cartItem.Product.ProductId">@((cartItem.Product.Price * cartItem.Quantity).ToString("F2"))</span></h6>
+                                                </div>
+                                                <div class="col-md-1 col-lg-1 col-xl-1 text-end">
+                                                    <a class="btn btn-danger" asp-page-handler="Delete" asp-route-id="@cartItem.Product.ProductId">
+                                                        <i class="fas fa-times"></i>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            TotalPrice += cartItem.Quantity * cartItem.Product.Price;
+                                            TotalItems += cartItem.Quantity;
+                                        }
+                                        <hr class="my-4">
+
+                                        <div class="pt-5">
+                                            <h6 class="mb-0">
+                                                <a href="./Index" class="text-body">
+                                                    <i class="fas fa-long-arrow-alt-left me-2"></i>Back to shop
+                                                </a>
+                                            </h6>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 bg-body-tertiary">
+                                    <div class="p-5">
+                                        <h3 class="fw-bold mb-5 mt-2 pt-1">Summary</h3>
+                                        <hr class="my-4">
+
+                                        <div class="d-flex justify-content-between mb-4">
+                                            <h5 class="text-uppercase">Items @TotalItems</h5>
+                                            <h5> <span id="totalCartPrice">@TotalPrice.ToString("F2")</span></h5>
+                                        </div>
+
+                                        <h5 class="text-uppercase mb-3">Shipping</h5>
+
+                                        <div class="mb-4 pb-2">
+                                            <select id="deliveryOption" class="form-select" onchange="updateCartTotalPrice()">
+                                                <option value="5.00">Standard Delivery - €5.00</option>
+                                                <option value="10.00">Express Delivery - €10.00</option>
+                                            </select>
+                                        </div>
+
+                                        <h5 class="text-uppercase mb-3">Give code</h5>
+
+                                        <div class="mb-5">
+                                            <div data-mdb-input-init class="form-outline">
+                                                <input type="text" id="form3Examplea2" class="form-control form-control-lg" />
+                                                <label class="form-label" for="form3Examplea2">Enter your code</label>
+                                            </div>
+                                        </div>
+
+                                        <hr class="my-4">
+
+                                        <div class="d-flex justify-content-between mb-5">
+                                            <h5 class="text-uppercase">Total price</h5>
+                                            <h5><span id="grandTotalPrice">@TotalPrice.ToString("F2")</span></h5>
+                                        </div>
+
+                                        <button type="button" class="btn btn-dark btn-block btn-lg">
+                                            Register
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        function updateQuantity(productId, newQuantity, itemPrice) {
+            if (newQuantity < 0) newQuantity = 0;
+
+            const quantityInput = document.getElementById(`quantityInput-${productId}`);
+            quantityInput.value = newQuantity;
+            updatePrice(productId, itemPrice);
+
+            // Update quantity in session via URL
+            window.location.href = `?handler=UpdateQuantity&id=${productId}&quantity=${newQuantity}`;
+        }
+
+        function updatePrice(productId, itemPrice) {
+            const quantityInput = document.getElementById(`quantityInput-${productId}`);
+            const totalPriceElement = document.getElementById(`totalPrice-${productId}`);
+            const newQuantity = parseInt(quantityInput.value);
+            const newTotalPrice = (itemPrice * newQuantity).toFixed(2);
+            totalPriceElement.textContent = `€ ${newTotalPrice}`;
+            updateCartTotalPrice();
+        }
+
+        function updateCartTotalPrice() {
+            let totalCartPrice = 0;
+            const priceElements = document.querySelectorAll('[id^="totalPrice-"]');
+            priceElements.forEach(element => {
+                totalCartPrice += parseFloat(element.textContent.replace('€ ', ''));
+            });
+
+            let grandTotalPrice = totalCartPrice;
+
+            if (totalCartPrice > 0) {
+                const deliverySelect = document.getElementById('deliveryOption');
+                const deliveryCost = parseFloat(deliverySelect.value);
+                grandTotalPrice += deliveryCost;
+            }
+
+            document.getElementById('totalCartPrice').textContent = `€ ${totalCartPrice.toFixed(2)}`;
+            document.getElementById('grandTotalPrice').textContent = `€ ${grandTotalPrice.toFixed(2)}`;
+        }
+
+        window.onload = updateCartTotalPrice;
+    </script>
+</body>
+</html>
