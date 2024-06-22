@@ -48,6 +48,7 @@ namespace Service
             return await iProductRepository.GetProductById(id);
         }
 
+        public async Task<Product> GetProductCartById(int id) => await iProductRepository.GetProductCartById(id);
         public async Task<List<Product>> GetProductByName(string name)
         {
             return await iProductRepository.GetProductByName(name);

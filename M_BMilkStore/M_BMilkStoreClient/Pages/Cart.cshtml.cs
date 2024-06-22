@@ -27,7 +27,7 @@ namespace M_BMilkStoreClient.Pages
                 int index = Exists(Carts, id.Value);
                 if (index == -1)
                 {
-                    Product = await _productService.GetProductById(id.Value);
+                    Product = await _productService.GetProductCartById(id.Value);
                     Carts.Add(new CartItem { Product = Product, Quantity = 1 });
                 }
                 else
@@ -70,6 +70,18 @@ namespace M_BMilkStoreClient.Pages
                 Carts.RemoveAt(index);
                 SessionService.SetSessionObjectAsJson(HttpContext.Session, "cart", Carts);
             }
+        }
+
+        public async Task<IActionResult> OnGetUpdateQuantityAsync(int id, int quantity)
+        {
+            Carts = SessionService.GetSessionObjectAsJson<List<CartItem>>(HttpContext.Session, "cart");
+            int index = Exists(Carts, id);
+            if (index != -1)
+            {
+                Carts[index].Quantity = quantity;
+                SessionService.SetSessionObjectAsJson(HttpContext.Session, "cart", Carts);
+            }
+            return RedirectToPage();
         }
     }
 }

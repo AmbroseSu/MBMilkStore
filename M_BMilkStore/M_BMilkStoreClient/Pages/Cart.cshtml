@@ -39,12 +39,12 @@
                                                     <h6 class="mb-0">@cartItem.Product.Description</h6>
                                                 </div>
                                                 <div class="col-md-3 col-lg-3 col-xl-2 d-flex">
-                                                    <button class="btn btn-link px-2" onclick="decreaseQuantity(@cartItem.Product.ProductId, @cartItem.Product.Price)">
+                                                    <button class="btn btn-link px-2" onclick="updateQuantity(@cartItem.Product.ProductId, @cartItem.Quantity - 1, @cartItem.Product.Price)">
                                                         <i class="fas fa-minus"></i>
                                                     </button>
                                                     <input id="quantityInput-@cartItem.Product.ProductId" min="0" name="quantity" value="@cartItem.Quantity" type="number"
                                                            class="form-control form-control-sm" oninput="updatePrice(@cartItem.Product.ProductId, @cartItem.Product.Price)">
-                                                    <button class="btn btn-link px-2" onclick="increaseQuantity(@cartItem.Product.ProductId, @cartItem.Product.Price)">
+                                                    <button class="btn btn-link px-2" onclick="updateQuantity(@cartItem.Product.ProductId, @cartItem.Quantity + 1, @cartItem.Product.Price)">
                                                         <i class="fas fa-plus"></i>
                                                     </button>
                                                 </div>
@@ -78,7 +78,7 @@
 
                                         <div class="d-flex justify-content-between mb-4">
                                             <h5 class="text-uppercase">Items @TotalItems</h5>
-                                            <h5>€ <span id="totalCartPrice">@TotalPrice.ToString("F2")</span></h5>
+                                            <h5> <span id="totalCartPrice">@TotalPrice.ToString("F2")</span></h5>
                                         </div>
 
                                         <h5 class="text-uppercase mb-3">Shipping</h5>
@@ -103,7 +103,7 @@
 
                                         <div class="d-flex justify-content-between mb-5">
                                             <h5 class="text-uppercase">Total price</h5>
-                                            <h5>€ <span id="grandTotalPrice">@TotalPrice.ToString("F2")</span></h5>
+                                            <h5><span id="grandTotalPrice">@TotalPrice.ToString("F2")</span></h5>
                                         </div>
 
                                         <button type="button" class="btn btn-dark btn-block btn-lg">
@@ -120,13 +120,15 @@
     </section>
 
     <script>
-        function decreaseQuantity(productId, itemPrice) {
+        function updateQuantity(productId, newQuantity, itemPrice) {
+            if (newQuantity < 0) newQuantity = 0;
+
             const quantityInput = document.getElementById(`quantityInput-${productId}`);
-            const currentValue = parseInt(quantityInput.value);
-            if (currentValue > 0) {
-                quantityInput.value = currentValue - 1;
-                updatePrice(productId, itemPrice);
-            }
+            quantityInput.value = newQuantity;
+            updatePrice(productId, itemPrice);
+
+            // Update quantity in session via URL
+            window.location.href = `?handler=UpdateQuantity&id=${productId}&quantity=${newQuantity}`;
         }
 
         function updatePrice(productId, itemPrice) {
@@ -138,13 +140,6 @@
             updateCartTotalPrice();
         }
 
-        function increaseQuantity(productId, itemPrice) {
-            const quantityInput = document.getElementById(`quantityInput-${productId}`);
-            const currentValue = parseInt(quantityInput.value);
-            quantityInput.value = currentValue + 1;
-            updatePrice(productId, itemPrice);
-        }
-
         function updateCartTotalPrice() {
             let totalCartPrice = 0;
             const priceElements = document.querySelectorAll('[id^="totalPrice-"]');
@@ -154,13 +149,9 @@
 
             let grandTotalPrice = totalCartPrice;
 
-            // Only add the delivery cost if there are items in the cart
             if (totalCartPrice > 0) {
-                // Get the selected delivery cost
                 const deliverySelect = document.getElementById('deliveryOption');
                 const deliveryCost = parseFloat(deliverySelect.value);
-
-                // Add the delivery cost to the grand total price
                 grandTotalPrice += deliveryCost;
             }
 

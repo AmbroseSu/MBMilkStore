@@ -20,6 +20,7 @@ namespace Repository
         public async Task<List<ProductBrand>> GetAllProductBrand() => await ProductDAO.Instance.GetAllProductBrand();
 
         public async Task<Product> GetProductById(int id) => await ProductDAO.Instance.GetProductById(id);
+        public async Task<Product> GetProductCartById(int id) => await ProductDAO.Instance.GetProductCartById(id);
         public async Task<List<Product>> GetProductByName(string name) => await ProductDAO.Instance.GetProductByName(name);
 
         public async Task UpdateProduct(Product product) => await ProductDAO.Instance.UpdateProduct(product);

@@ -13,6 +13,7 @@ namespace Repository.Interfaces
         Task<List<ProductCategory>> GetAllProductCategory();
         Task<List<ProductBrand>> GetAllProductBrand();
         Task<Product> GetProductById(int id);
+        Task<Product> GetProductCartById(int id);
         Task<List<Product>> GetProductByName(string name);
         Task AddProduct(Product product);
         Task DeleteProduct(int id);

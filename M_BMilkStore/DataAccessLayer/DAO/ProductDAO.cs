@@ -78,13 +78,29 @@ namespace DataAccessLayer.DAO
             return listProductBrand;
         }
 
-        public async Task<Product> GetProductById(int id)
+        public async Task<Product> GetProductCartById(int id)
         {
             try
             {
                 using var context = new M_BMilkStoreDBContext();
                 var product = await context.Products.FirstOrDefaultAsync(p => p.ProductId == id);
                 return product;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<Product> GetProductById(int id)
+        {
+            try
+            {
+                using var context = new M_BMilkStoreDBContext();
+                return await context.Products
+                    .Include(p => p.ProductBrand)
+                    .Include(p => p.ProductCategory)
+                    .FirstOrDefaultAsync(p => p.ProductId == id && (p.Status ?? false) && !(p.IsDeleted ?? true));
             }
             catch (Exception ex)
             {
