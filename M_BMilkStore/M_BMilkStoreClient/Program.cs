@@ -10,6 +10,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
+builder.Services.AddRazorPages();
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddDbContext<M_BMilkStoreDBContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DB"));
