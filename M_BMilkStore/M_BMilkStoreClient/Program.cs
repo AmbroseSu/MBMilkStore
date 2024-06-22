@@ -2,12 +2,24 @@ using Repository.Interfaces;
 using Repository;
 using Service;
 using Service.Interfaces;
+using DataAccessLayer;
+using Microsoft.EntityFrameworkCore;
+using DataAccessLayer.DAO;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddRazorPages();
-builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
+builder.Services.AddDbContext<M_BMilkStoreDBContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DB"));
+
+});
+builder.Services.AddScoped(typeof(UserDAO));
+
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddSingleton<IProductRepository, ProductRepository>();
 builder.Services.AddSingleton<IProductService, ProductService>();
 builder.Services.AddDistributedMemoryCache();
@@ -29,6 +41,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+app.UseSession();
 app.UseSession();
 
 app.UseAuthorization();

@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -44,8 +45,10 @@
                 <ul>
                     <li><a asp-page="/Index" class="active">Home<br></a></li>
                     <li><a href="#about">About</a></li>
-                    <li><a href="#menu">Menu</a></li>
+                    <li><a asp-page="/Index">Menu</a></li>
                     <li><a asp-page="/Products/Index">Products</a></li>
+                    <li><a asp-page="/ManagementCategory/Index">Category</a></li>
+                    <li><a asp-page="/ManagementBrand/Index">Brand</a></li>
                     <li class="dropdown">
                         <a href="#"><span>Dropdown</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
                         <ul>
@@ -69,8 +72,14 @@
                 </ul>
                 <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
             </nav>
-            <a href="#login" class="btn-login">Login</a>
-            <a href="#register" class="btn-register">Register</a>
+            @if (string.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("UserEmail")))
+            {
+                <a asp-page="/Authenticate" class="btn-login">Login/Register</a>
+            }
+            else
+            {
+                <a asp-page="/Logout" class="btn-login">Logout</a>
+            }
             <a class="btn-getstarted" href="./Cart">Your Cart</a>
 
         </div>
