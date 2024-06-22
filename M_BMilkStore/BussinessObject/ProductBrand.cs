@@ -14,6 +14,6 @@ namespace BussinessObject
         [Key]
         public int ProductBrandId { get; set; }
         public string Name { get; set; }
-        public virtual ICollection<Product> ListProduct { get; set; }
+        public virtual ICollection<Product> ListProduct { get; set; } = new List<Product>();
     }
 }
