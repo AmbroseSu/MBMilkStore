@@ -2,12 +2,20 @@
 @model M_BMilkStoreClient.Pages.CartModel
 @{
 }
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>@ViewData["Title"] - My ASP.NET Application</title>
     <link rel="stylesheet" href="~/css/ShoppingCart.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <style>
+        .cart-items-container {
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+    </style>
 </head>
 <body>
     <section class="h-100 h-custom" style="background-color: #d2c9ff;">
@@ -18,7 +26,7 @@
                         <div class="card-body p-0">
                             <div class="row g-0">
                                 <div class="col-lg-8">
-                                    <div class="p-5">
+                                    <div class="p-5 h-100 cart-items-container">
                                         <div class="d-flex justify-content-center align-items-center mb-5">
                                             <h1 class="fw-bold mb-0">Shopping Cart</h1>
                                         </div>
