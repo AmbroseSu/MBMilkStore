@@ -3,6 +3,8 @@ using M_BMilkStoreClient.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Service.Interfaces;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace M_BMilkStoreClient.Pages
 {
@@ -13,8 +15,10 @@ namespace M_BMilkStoreClient.Pages
         {
             _productService = productService;
         }
+
         public IList<CartItem> Carts { get; set; } = new List<CartItem>();
         public Product Product { get; set; } = default!;
+
         public async Task OnGetAsync(int? id)
         {
             Carts = SessionService.GetSessionObjectAsJson<List<CartItem>>(HttpContext.Session, "cart") ?? new List<CartItem>();
@@ -32,7 +36,6 @@ namespace M_BMilkStoreClient.Pages
                 }
                 SessionService.SetSessionObjectAsJson(HttpContext.Session, "cart", Carts);
             }
-            
         }
 
         private int Exists(IList<CartItem> cart, int id)
