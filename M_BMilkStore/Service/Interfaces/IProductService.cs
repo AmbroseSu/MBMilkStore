@@ -9,7 +9,7 @@ namespace Service.Interfaces
 {
     public interface IProductService
     {
-        Task <Product> GetProductById(int id);
+        Task<Product> GetProductById(int id);
         Task<List<Product>> GetProductByName(string name);
         Task<List<Product>> GetAllProduct();
         Task<List<ProductCategory>> GetAllProductCategory();

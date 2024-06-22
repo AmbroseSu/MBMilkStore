@@ -1,6 +1,7 @@
 using BussinessObject;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Service.Interfaces;
 
 namespace M_BMilkStoreClient.Pages
@@ -15,7 +16,8 @@ namespace M_BMilkStoreClient.Pages
             _productService = productService;
         }
 
-        public IList<Product> Product { get; set; } = default!;
+        public IList<Product> Product { get; set; } = new List<Product>();
+
         public async Task OnGetAsync(string searchString)
         {
             if (!string.IsNullOrEmpty(searchString))

@@ -83,10 +83,8 @@ namespace DataAccessLayer.DAO
             try
             {
                 using var context = new M_BMilkStoreDBContext();
-                return await context.Products
-                    .Include(p => p.ProductBrand)
-                    .Include(p => p.ProductCategory)
-                    .FirstOrDefaultAsync(p => p.ProductId == id && (p.Status ?? false) && !(p.IsDeleted ?? true));
+                var product = await context.Products.FirstOrDefaultAsync(p => p.ProductId == id);
+                return product;
             }
             catch (Exception ex)
             {
