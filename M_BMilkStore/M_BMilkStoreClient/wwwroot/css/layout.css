@@ -1,0 +1,64 @@
+﻿/* Ensure the HTML and body elements take up the full height */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+/* Wrapper for the entire page content */
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* Ensure the main content area grows to fill available space */
+.flex-grow-1 {
+    flex-grow: 1;
+}
+
+/* Style for the footer to keep it at the bottom */
+.footer1 {
+    padding: 20px;
+    text-align: center;
+    width: 100%;
+    margin-top: auto;
+}
+
+/* Ensure header styling remains intact */
+
+/* Additional styling for the page content */
+.container {
+    padding: 20px;
+}
+
+/* Basic styles for the footer elements */
+.footer1 .address, .footer1 .contact, .footer1 .opening-hours, .footer1 .social-links {
+    margin-bottom: 20px;
+}
+
+.footer1 .icon {
+    font-size: 24px;
+    margin-right: 10px;
+}
+
+.footer1 .social-links a {
+    margin-right: 10px;
+    color: #343a40; /* Adjust as necessary */
+    text-decoration: none;
+}
+
+    .footer1 .social-links a:hover {
+        color: #007bff; /* Adjust as necessary */
+    }
+
+.footer1 .credits {
+    margin-top: 20px;
+    font-size: 14px;
+}
+
+/* Ensure the footer text aligns nicely */
+.footer1 p, .footer1 h4 {
+    margin: 0;
+    padding: 0;
+}
