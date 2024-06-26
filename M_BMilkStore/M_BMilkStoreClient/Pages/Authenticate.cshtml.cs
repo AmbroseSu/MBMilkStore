@@ -98,7 +98,7 @@ namespace M_BMilkStoreClient.Pages
                     HttpContext.Session.SetInt32("UserId", user.UserId);
                     HttpContext.Session.SetString("UserEmail", user.Email);
                     HttpContext.Session.SetString("UserRole", user.UserRole.UserRoleName);
-                    return RedirectToPage("/AdminPage");
+                    return RedirectToPage("/Admin/AdminPage");
                 }
             }
 
