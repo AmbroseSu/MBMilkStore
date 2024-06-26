@@ -25,15 +25,18 @@
                     <a href="#" class="icon"><i class="fa-brands fa-github"></i></a>
                     <a href="#" class="icon"><i class="fa-brands fa-linkedin-in"></i></a>
                 </div>
-                <span>or use your email for registration</span>
                 <input type="text" placeholder="Name" asp-for="RegisterInput.Name" />
                 <span asp-validation-for="RegisterInput.Name" class="text-danger"></span>
+                <div class="text-danger" id="register_err_msg_name"></div>
                 <input type="email" placeholder="Email" asp-for="RegisterInput.Email" />
                 <span asp-validation-for="RegisterInput.Email" class="text-danger"></span>
+                <div class="text-danger" id="register_err_msg_email"></div>
                 <input type="password" placeholder="Password" asp-for="RegisterInput.Password" />
                 <span asp-validation-for="RegisterInput.Password" class="text-danger"></span>
+                <div class="text-danger" id="register_err_msg_password"></div>
                 <input type="password" placeholder="Confirm Password" asp-for="RegisterInput.ConfirmPassword" />
                 <span asp-validation-for="RegisterInput.ConfirmPassword" class="text-danger"></span>
+                <div class="text-danger" id="register_err_msg_confirmPassword"></div>
                 <button type="submit" id="btnRegister">Sign Up</button>
                 <div class="text-danger" id="register_err_msg"></div>
             </form>
@@ -79,6 +82,7 @@
         $(document).ready(function () {
             $("#btnRegister").click(function (event) {
                 event.preventDefault();
+                clearValidationErrors();
 
                 $.ajax({
                     url: "/Authenticate?handler=Register",
@@ -92,7 +96,6 @@
                             window.location.href = "/Authenticate"; // Redirect to homepage or any other page
                         } else {
                             // Registration failed, display error messages
-                            $("#register_err_msg").html("");
                             if (response.validationErrors) {
                                 displayValidationErrors(response.validationErrors);
                             } else {
@@ -107,11 +110,30 @@
             });
         });
 
+        function clearValidationErrors() {
+            $("#register_err_msg_name").html("");
+            $("#register_err_msg_email").html("");
+            $("#register_err_msg_password").html("");
+            $("#register_err_msg_confirmPassword").html("");
+            $("#register_err_msg").html("");
+        }
+
         function displayValidationErrors(errors) {
             $.each(errors, function (key, value) {
-                $("#register_err_msg").append('<div class="text-danger">' + value + '</div>');
+                if (key.includes("Name")) {
+                    $("#register_err_msg_name").html(value);
+                } else if (key.includes("Email")) {
+                    $("#register_err_msg_email").html(value);
+                } else if (key.includes("Password") && !key.includes("ConfirmPassword")) {
+                    $("#register_err_msg_password").html(value);
+                } else if (key.includes("ConfirmPassword")) {
+                    $("#register_err_msg_confirmPassword").html(value);
+                } else {
+                    $("#register_err_msg").append('<div class="text-danger">' + value + '</div>');
+                }
             });
         }
     </script>
+
 </body>
 </html>
