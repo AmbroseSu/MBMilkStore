@@ -21,8 +21,6 @@ namespace M_BMilkStoreClient.Pages
         [BindProperty]
         public LoginInputModel LoginInput { get; set; }
 
-
-
         public class LoginInputModel
         {
             [Required]
@@ -33,6 +31,7 @@ namespace M_BMilkStoreClient.Pages
             [DataType(DataType.Password)]
             public string Password { get; set; }
         }
+
         [BindProperty]
         public RegisterInputModel RegisterInput { get; set; }
 
@@ -51,17 +50,14 @@ namespace M_BMilkStoreClient.Pages
             [Required(ErrorMessage = "Password is required")]
             [StringLength(100, MinimumLength = 6, ErrorMessage = "Password must be at least 6 characters long")]
             [PasswordPolicy]
-
             [Display(Name = "Password")]
             public string Password { get; set; }
 
             [Required(ErrorMessage = "Confirm Password is required")]
-
             [Display(Name = "Confirm Password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match")]
             public string ConfirmPassword { get; set; }
         }
-
 
         public void OnGet()
         {
@@ -71,7 +67,6 @@ namespace M_BMilkStoreClient.Pages
         public async Task<IActionResult> OnPostLoginAsync()
         {
             ModelState.Clear();
-
 
             TryValidateModel(LoginInput, nameof(LoginInput));
 
@@ -89,23 +84,32 @@ namespace M_BMilkStoreClient.Pages
                     return Page();
                 }
 
-                if (user.Password == LoginInput.Password && user.Status == true && user.IsDeleted == false)
+                if (user.Password == LoginInput.Password && user.Status == true && user.IsDeleted == false && user.RoleId != 1)
                 {
                     HttpContext.Session.SetString("UserName", user.Name);
+                    HttpContext.Session.SetInt32("UserId", user.UserId);
                     HttpContext.Session.SetString("UserEmail", user.Email);
                     HttpContext.Session.SetString("UserRole", user.UserRole.UserRoleName);
                     return RedirectToPage("/Index");
+                }
+                if (user.Password == LoginInput.Password && user.Status == true && user.IsDeleted == false && user.RoleId == 1)
+                {
+                    HttpContext.Session.SetString("UserName", user.Name);
+                    HttpContext.Session.SetInt32("UserId", user.UserId);
+                    HttpContext.Session.SetString("UserEmail", user.Email);
+                    HttpContext.Session.SetString("UserRole", user.UserRole.UserRoleName);
+                    return RedirectToPage("/AdminPage");
                 }
             }
 
             ViewData["err_msg"] = "Incorrect Username or Password!";
             return Page();
         }
+
         public async Task<IActionResult> OnPostRegisterAsync()
         {
-            ModelState.Clear();  
+            ModelState.Clear();
 
-            
             TryValidateModel(RegisterInput, nameof(RegisterInput));
 
             if (!ModelState.IsValid)
@@ -136,11 +140,14 @@ namespace M_BMilkStoreClient.Pages
             return new JsonResult(new { success = false, errorMessage = "Registration failed. Please try again." });
         }
 
-        private object GetValidationErrors()
+        private IDictionary<string, string> GetValidationErrors()
         {
-            var errors = ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage));
-            return errors;
+            return ModelState
+                .Where(x => x.Value.Errors.Count > 0)
+                .ToDictionary(
+                    kvp => kvp.Key,
+                    kvp => kvp.Value.Errors.First().ErrorMessage
+                );
         }
     }
-    }
-
+}

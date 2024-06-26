@@ -46,7 +46,11 @@
                     <li><a asp-page="/Index" class="active">Home<br></a></li>
                     <li><a href="#about">About</a></li>
                     <li><a asp-page="/Index">Menu</a></li>
-                    <li><a asp-page="/Products/Index">Products</a></li>
+                    @if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Admin")
+                    {
+                        <li><a asp-page="/Products/Index">Products</a></li>
+                    }
+                    
                     <li><a asp-page="/ManagementCategory/Index">Category</a></li>
                     <li><a asp-page="/ManagementBrand/Index">Brand</a></li>
                     <li class="dropdown">
@@ -80,7 +84,11 @@
             {
                 <a asp-page="/Logout" class="btn-login">Logout</a>
             }
-            <a class="btn-getstarted" href="./Cart">Your Cart</a>
+            @if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Customer")
+            {
+                <a class="btn-getstarted" href="./Cart">Your Cart</a>
+            }
+            
 
         </div>
     </header>
