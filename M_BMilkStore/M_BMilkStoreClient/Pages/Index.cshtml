@@ -72,7 +72,7 @@
                                 @if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Customer")
                                 {
                                     <td>
-                                    <a class="btn btn-success" asp-page="./Cart" asp-route-id="@item.ProductId">Add to Cart</a>
+                                        <a class="btn btn-success" asp-page="./ShoppingCart/Cart" asp-route-id="@item.ProductId">Add to Cart</a>
                                 </td>
                                 }
                                 

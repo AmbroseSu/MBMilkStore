@@ -1,0 +1,149 @@
+﻿@page
+@model M_BMilkStoreClient.Pages.ShoppingCart.CheckoutModel
+@{
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>@ViewData["Title"] - My ASP.NET Application</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <link rel="stylesheet" href="~/lib//bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/lib/toastr.js/toastr.min.css" />
+    <link rel="stylesheet" href="~/css//font-awesome/css/all.min.css" />
+</head>
+<body>
+    <section>
+        <div class="row">
+            <div class="col-md-8 mb-4">
+                <div class="card mb-4">
+                    <div class="card-header py-3">
+                        <h5 class="mb-0">Biling details</h5>
+                    </div>
+                    <div class="card-body">
+                        <form method="post">
+                            <!-- 2 column grid layout with text inputs for the first and last names -->
+                            <div class="row mb-4">
+                                <div class="col">
+                                    <div data-mdb-input-init class="form-outline">
+                                        <input type="text" id="form6Example1" name="FirstName" class="form-control" value="@Model.FirstName" />
+                                        <label class="form-label" for="form6Example1">First name</label>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div data-mdb-input-init class="form-outline">
+                                        <input type="text" id="form6Example2" name="LastName" class="form-control" value="@Model.LastName" />
+                                        <label class="form-label" for="form6Example2">Last name</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Text input -->
+                            <div data-mdb-input-init class="form-outline mb-4">
+                                <input type="text" id="form6Example4" name="Address" class="form-control" value="@Model.Address" />
+                                <label class="form-label" for="form6Example4">Address</label>
+                            </div>
+
+                            <!-- Email input -->
+                            <div data-mdb-input-init class="form-outline mb-4">
+                                <input type="email" id="form6Example5" name="Email" class="form-control" value="@Model.Email" />
+                                <label class="form-label" for="form6Example5">Email</label>
+                            </div>
+
+                            <!-- Number input -->
+                            <div data-mdb-input-init class="form-outline mb-4">
+                                <input type="number" id="form6Example6" name="PhoneNumber" class="form-control" value="@Model.PhoneNumber" />
+                                <label class="form-label" for="form6Example6">Phone</label>
+                            </div>
+
+                            <hr class="my-4" />
+
+                            <div class="form-check mb-4">
+                                <input class="form-check-input" type="checkbox" value="" id="checkoutForm2" checked />
+                                <label class="form-check-label" for="checkoutForm2">
+                                    Save this information for next time
+                                </label>
+                            </div>
+
+                            <input type="hidden" name="TotalPrice" value="@Model.TotalPrice" />
+                            <button data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-lg btn-block" type="submit">
+                                Submit
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <div class="card mb-4">
+                    <div class="card-header py-3">
+                        <h5 class="mb-0">Summary</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
+                                Products
+                                <span>€@Model.TotalPrice</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                Delivery
+                                <span>@Model.DeliveryOptionName - @Model.DeliveryOptionValue</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 mb-3">
+                                <div>
+                                    <strong>Total amount</strong>
+                                    <strong>
+                                        <p class="mb-0">(including Delivery Cost)</p>
+                                    </strong>
+                                </div>
+                                <span><strong>€@Model.FinalPrice</strong></span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="~/lib/toastr.js/toastr.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            toastr.options = {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": true,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "5000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            };
+
+        @if (Model.IsUpdateSuccessful)
+        {
+            <text>
+                    toastr.success('Create Order!', 'Success');
+                setTimeout(function () {
+                    window.location.href = '/Index';
+                }, 6000); // 6000 milliseconds = 6 seconds
+            </text>
+        }
+        @if (Model.IsUpdateFailed)
+        {
+            <text>
+                    toastr.error('Update failed!', 'Error');
+            </text>
+        }
+                });
+    </script>
+</body>
+</html>

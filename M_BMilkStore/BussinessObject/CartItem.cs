@@ -9,8 +9,7 @@ namespace BussinessObject
 {
     public class CartItem
     {
-        public int? UserId { get; set; } // Reference to the user who added the item
-        public Product Product { get; set; }
+        public Product? Product { get; set; }
         public int Quantity { get; set; } // Quantity of the product in the cart
     }
 }

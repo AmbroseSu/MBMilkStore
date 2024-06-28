@@ -11,5 +11,7 @@ namespace Service.Interfaces
     {
         public Task<User> GetAnUserByEmail(string email);
         public Task<bool> CreateUserAsync(User user);
+        public Task<User> GetUserByID(int id);
+        public Task<bool> UpdateUserAsync(User updatedUser);
     }
 }

@@ -11,5 +11,7 @@ namespace Repository.Interfaces
     {
         public Task<User> GetAnUserByEmail(string email);
         public Task<bool> AddUserAsync(User user);
+        public Task<User> GetUserByID(int id);
+        public Task<bool> UpdateUserAsync(User updatedUser);
     }
 }

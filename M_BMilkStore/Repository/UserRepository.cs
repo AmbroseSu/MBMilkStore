@@ -26,5 +26,7 @@ namespace Repository
         {
             return await _userDAO.GetUserByEmail(email);
         }
+        public async Task<User> GetUserByID(int id) => await _userDAO.GetUserByID(id);
+        public async Task<bool> UpdateUserAsync(User updatedUser) => await _userDAO.UpdateUserAsync(updatedUser);
     }
 }
