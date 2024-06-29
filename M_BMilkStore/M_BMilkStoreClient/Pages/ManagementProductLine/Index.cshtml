@@ -1,0 +1,54 @@
+﻿@page
+@model M_BMilkStoreClient.Pages.ManagementProductLine.IndexModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-page="Create">Create New</a>
+</p>
+<table class="table">
+    @if (!string.IsNullOrEmpty(Model.MessageError))
+    {
+        <div class="alert alert-danger" role="alert">
+            @Model.MessageError
+        </div>
+    }
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ProductLine[0].Quantity)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ProductLine[0].ExpiredDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ProductLine[0].Product)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.ProductLine) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Quantity)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ExpiredDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Product.Name)
+            </td>
+            <td>
+                <a asp-page="./Edit" asp-route-id="@item.ProductLineId">Edit</a> |
+                <a asp-page="./Details" asp-route-id="@item.ProductLineId">Details</a> |
+                <a asp-page="./Delete" asp-route-id="@item.ProductLineId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

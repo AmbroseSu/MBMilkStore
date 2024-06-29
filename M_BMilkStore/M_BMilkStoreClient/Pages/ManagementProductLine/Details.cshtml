@@ -1,0 +1,43 @@
+﻿@page
+@model M_BMilkStoreClient.Pages.ManagementProductLine.DetailsModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>ProductLine</h4>
+    <hr />
+    @if (!string.IsNullOrEmpty(Model.MessageError))
+    {
+        <div class="alert alert-danger" role="alert">
+            @Model.MessageError
+        </div>
+    }
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ProductLine.Quantity)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.ProductLine.Quantity)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ProductLine.ExpiredDate)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.ProductLine.ExpiredDate)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ProductLine.Product)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.ProductLine.Product.Description)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-page="./Edit" asp-route-id="@Model.ProductLine.ProductLineId">Edit</a> |
+    <a asp-page="/Products/Index">Back to List</a>
+</div>
