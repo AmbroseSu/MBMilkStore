@@ -103,8 +103,12 @@ namespace DataAccessLayer.Migrations
                     UserId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Status = table.Column<bool>(type: "bit", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: true),
                     RoleId = table.Column<int>(type: "int", nullable: false)
@@ -151,7 +155,7 @@ namespace DataAccessLayer.Migrations
                     Status = table.Column<bool>(type: "bit", nullable: false),
                     OrderTotalAmount = table.Column<float>(type: "real", nullable: false),
                     UserId = table.Column<int>(type: "int", nullable: false),
-                    VoucherId = table.Column<int>(type: "int", nullable: false)
+                    VoucherId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -166,8 +170,7 @@ namespace DataAccessLayer.Migrations
                         name: "FK_Order_Voucher",
                         column: x => x.VoucherId,
                         principalTable: "Voucher",
-                        principalColumn: "VoucherId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "VoucherId");
                 });
 
             migrationBuilder.CreateTable(

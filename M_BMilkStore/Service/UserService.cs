@@ -33,5 +33,8 @@ namespace Service
         {
             return await _repository.GetAnUserByEmail(email);
         }
+
+        public async Task<User> GetUserByID(int id) => await _repository.GetUserByID(id);
+        public async Task<bool> UpdateUserAsync(User updatedUser) => await _repository.UpdateUserAsync(updatedUser);
     }
 }

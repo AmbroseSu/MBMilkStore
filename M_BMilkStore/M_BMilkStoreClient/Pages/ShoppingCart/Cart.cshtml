@@ -10,14 +10,34 @@
     <title>@ViewData["Title"] - My ASP.NET Application</title>
     <link rel="stylesheet" href="~/css/ShoppingCart.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <style>
         .cart-items-container {
             max-height: 90vh;
             overflow-y: auto;
         }
+
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
     </style>
 </head>
 <body>
+    <section>
+        <div class="toast-container">
+            <div id="registerToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="3000">
+                <div class="toast-header">
+                    <strong class="mr-auto">Error</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <div class="toast-body">
+                    Please Login
+                </div>
+            </div>
+        </div>
+    </section>
     <section class="h-100 h-custom" style="background-color: #d2c9ff;">
         <div class="container py-5 h-100">
             <div class="row d-flex justify-content-center align-items-center h-100">
@@ -39,8 +59,7 @@
                                             <hr class="my-4">
                                             <div class="row mb-4 d-flex justify-content-between align-items-center">
                                                 <div class="col-md-2 col-lg-2 col-xl-2">
-                                                    <img src="@cartItem.Product.Image" alt="Product Image"
-                                                         class="img-fluid rounded-3">
+                                                    <img src="@cartItem.Product.Image" alt="Product Image" class="img-fluid rounded-3">
                                                 </div>
                                                 <div class="col-md-3 col-lg-3 col-xl-3">
                                                     <h6 class="text-muted">@cartItem.Product.Name</h6>
@@ -50,8 +69,7 @@
                                                     <button class="btn btn-link px-2" onclick="updateQuantity(@cartItem.Product.ProductId, @cartItem.Quantity - 1, @cartItem.Product.Price)">
                                                         <i class="fas fa-minus"></i>
                                                     </button>
-                                                    <input id="quantityInput-@cartItem.Product.ProductId" min="0" name="quantity" value="@cartItem.Quantity" type="number"
-                                                           class="form-control form-control-sm" oninput="updatePrice(@cartItem.Product.ProductId, @cartItem.Product.Price)">
+                                                    <input id="quantityInput-@cartItem.Product.ProductId" min="0" name="quantity" value="@cartItem.Quantity" type="number" class="form-control form-control-sm" oninput="updatePrice(@cartItem.Product.ProductId, @cartItem.Product.Price)">
                                                     <button class="btn btn-link px-2" onclick="updateQuantity(@cartItem.Product.ProductId, @cartItem.Quantity + 1, @cartItem.Product.Price)">
                                                         <i class="fas fa-plus"></i>
                                                     </button>
@@ -72,7 +90,7 @@
 
                                         <div class="pt-5">
                                             <h6 class="mb-0">
-                                                <a href="./Index" class="text-body">
+                                                <a href="/Index" class="text-body">
                                                     <i class="fas fa-long-arrow-alt-left me-2"></i>Back to shop
                                                 </a>
                                             </h6>
@@ -114,9 +132,16 @@
                                             <h5><span id="grandTotalPrice">@TotalPrice.ToString("F2")</span></h5>
                                         </div>
 
-                                        <button type="button" class="btn btn-dark btn-block btn-lg">
-                                            Register
-                                        </button>
+                                        <!-- Form to capture total price and delivery option -->
+                                        <form method="post" asp-page-handler="ProceedToCheckout">
+                                            <input type="hidden" id="hiddenTotalPrice" name="TotalPrice" value="@TotalPrice.ToString("F2")" />
+                                            <input type="hidden" id="hiddenDeliveryOptionName" name="DeliveryOptionName" value="Standard Delivery" />
+                                            <input type="hidden" id="hiddenDeliveryOptionValue" name="DeliveryOptionValue" value="5.00" />
+
+                                            <button type="submit" class="btn btn-dark btn-block btn-lg" onclick="setHiddenInputs()">
+                                                Proceed to Checkout
+                                            </button>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
@@ -128,46 +153,67 @@
     </section>
 
     <script>
-        function updateQuantity(productId, newQuantity, itemPrice) {
-            if (newQuantity < 0) newQuantity = 0;
+        document.addEventListener("DOMContentLoaded", function () {
+            function updateQuantity(productId, newQuantity, itemPrice) {
+                if (newQuantity < 0) newQuantity = 0;
 
-            const quantityInput = document.getElementById(`quantityInput-${productId}`);
-            quantityInput.value = newQuantity;
-            updatePrice(productId, itemPrice);
+                const quantityInput = document.getElementById(`quantityInput-${productId}`);
+                quantityInput.value = newQuantity;
+                updatePrice(productId, itemPrice);
 
-            // Update quantity in session via URL
-            window.location.href = `?handler=UpdateQuantity&id=${productId}&quantity=${newQuantity}`;
-        }
+                // Update quantity in session via URL
+                window.location.href = `?handler=UpdateQuantity&id=${productId}&quantity=${newQuantity}`;
+            }
 
-        function updatePrice(productId, itemPrice) {
-            const quantityInput = document.getElementById(`quantityInput-${productId}`);
-            const totalPriceElement = document.getElementById(`totalPrice-${productId}`);
-            const newQuantity = parseInt(quantityInput.value);
-            const newTotalPrice = (itemPrice * newQuantity).toFixed(2);
-            totalPriceElement.textContent = `€ ${newTotalPrice}`;
-            updateCartTotalPrice();
-        }
+            function updatePrice(productId, itemPrice) {
+                const quantityInput = document.getElementById(`quantityInput-${productId}`);
+                const totalPriceElement = document.getElementById(`totalPrice-${productId}`);
+                const newQuantity = parseInt(quantityInput.value);
+                const newTotalPrice = (itemPrice * newQuantity).toFixed(2);
+                totalPriceElement.textContent = `€ ${newTotalPrice}`;
+                updateCartTotalPrice();
+            }
 
-        function updateCartTotalPrice() {
-            let totalCartPrice = 0;
-            const priceElements = document.querySelectorAll('[id^="totalPrice-"]');
-            priceElements.forEach(element => {
-                totalCartPrice += parseFloat(element.textContent.replace('€ ', ''));
-            });
+            function updateCartTotalPrice() {
+                let totalCartPrice = 0;
+                const priceElements = document.querySelectorAll('[id^="totalPrice-"]');
+                priceElements.forEach(element => {
+                    totalCartPrice += parseFloat(element.textContent.replace('€ ', ''));
+                });
 
-            let grandTotalPrice = totalCartPrice;
+                let grandTotalPrice = totalCartPrice;
 
-            if (totalCartPrice > 0) {
                 const deliverySelect = document.getElementById('deliveryOption');
                 const deliveryCost = parseFloat(deliverySelect.value);
                 grandTotalPrice += deliveryCost;
+
+                document.getElementById('totalCartPrice').textContent = `€ ${totalCartPrice.toFixed(2)}`;
+                document.getElementById('grandTotalPrice').textContent = `€ ${grandTotalPrice.toFixed(2)}`;
+
+                // Update hidden delivery option
+                const deliveryOptionText = deliverySelect.options[deliverySelect.selectedIndex].text.split(' - ')[0];
+                document.getElementById('hiddenDeliveryOptionName').value = deliveryOptionText;
+                document.getElementById('hiddenDeliveryOptionValue').value = deliveryCost.toFixed(2);
             }
 
-            document.getElementById('totalCartPrice').textContent = `€ ${totalCartPrice.toFixed(2)}`;
-            document.getElementById('grandTotalPrice').textContent = `€ ${grandTotalPrice.toFixed(2)}`;
-        }
+            function setHiddenInputs() {
+                const totalCartPrice = document.getElementById('totalCartPrice').textContent.replace('€ ', '');
+                const deliverySelect = document.getElementById('deliveryOption');
+                const deliveryOptionText = deliverySelect.options[deliverySelect.selectedIndex].text;
+                const deliveryCost = deliverySelect.value;
 
-        window.onload = updateCartTotalPrice;
+                document.getElementById('hiddenTotalPrice').value = totalCartPrice;
+                document.getElementById('hiddenDeliveryOptionName').value = deliveryOptionText;
+                document.getElementById('hiddenDeliveryOptionValue').value = deliveryCost;
+            }
+
+            window.updateQuantity = updateQuantity;
+            window.updatePrice = updatePrice;
+            window.updateCartTotalPrice = updateCartTotalPrice;
+
+            updateCartTotalPrice();
+        });
     </script>
+
 </body>
 </html>
