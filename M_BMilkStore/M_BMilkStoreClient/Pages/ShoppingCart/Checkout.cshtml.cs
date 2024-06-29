@@ -131,6 +131,9 @@ namespace M_BMilkStoreClient.Pages.ShoppingCart
             if (IsUpdateSuccessful)
             {
                 HttpContext.Session.Remove("cart");
+                HttpContext.Session.Remove("DeliveryOptionValue");
+                HttpContext.Session.Remove("DeliveryOptionName");
+                HttpContext.Session.Remove("TotalPrice");
                 return RedirectToPage("/Index");
             }
             return Page();
