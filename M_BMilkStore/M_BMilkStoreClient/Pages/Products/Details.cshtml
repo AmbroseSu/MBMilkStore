@@ -131,9 +131,7 @@
                                     @Html.DisplayFor(modelItem => item.Product.Name)
                                 </td>
                                 <td>
-                                    <a asp-page="./Edit" asp-route-id="@item.ProductLineId">Edit</a> |
-                                    <a asp-page="./Details" asp-route-id="@item.ProductLineId">Details</a> |
-                                    <a asp-page="./Delete" asp-route-id="@item.ProductLineId">Delete</a>
+                                    <a asp-page="/ManagementProductLine/Delete" asp-route-id="@item.ProductLineId">Delete</a>
                                 </td>
                             </tr>
                         }

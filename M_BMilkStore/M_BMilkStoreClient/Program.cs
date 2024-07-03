@@ -20,6 +20,7 @@ builder.Services.AddDbContext<M_BMilkStoreDBContext>(options =>
 builder.Services.AddScoped(typeof(UserDAO));
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IProductLineService, ProductLineService>();
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddSingleton<IProductRepository, ProductRepository>();

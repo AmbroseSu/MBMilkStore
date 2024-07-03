@@ -1,4 +1,4 @@
-using BussinessObject;
+﻿using BussinessObject;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
@@ -39,7 +39,27 @@ namespace M_BMilkStoreClient.Pages
                 var productLines = await iProductLineService.GetProductLinesByProductId(product.ProductId);
                 if (productLines != null && productLines.Any())
                 {
-                    Product.Add(product);
+                    int totalQuantity = productLines.Where(pl => pl.Status == true && pl.IsDeleted == false).Sum(pl => pl.Quantity);
+
+                    Product.Add(new Product
+                    {
+                        ProductId = product.ProductId,
+                        Name = product.Name,
+                        Description = product.Description,
+                        Price = product.Price,
+                        Image = product.Image,
+                        ProductBrandId = product.ProductBrandId,
+                        ProductCategoryId = product.ProductCategoryId,
+                        ProductBrand = product.ProductBrand,
+                        ProductCategory = product.ProductCategory,
+                        ListProductLine = product.ListProductLine, // Giữ nguyên danh sách product line nếu cần
+                        ListOrderDetail = product.ListOrderDetail, // Giữ nguyên danh sách order detail nếu cần
+                        Status = product.Status,
+                        IsDeleted = product.IsDeleted,
+
+                        // Tạo một thuộc tính tạm thời để lưu total quantity tính được
+                        TotalQuantity = totalQuantity
+                    });
                 }
             }
 

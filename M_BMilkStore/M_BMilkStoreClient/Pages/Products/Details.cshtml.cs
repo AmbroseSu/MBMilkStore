@@ -79,8 +79,18 @@ namespace M_BMilkStoreClient.Pages.Products
             try
             {
                 ProductLine.ProductId = id;
-                var productLine = iProductLineService.SaveProductLine(ProductLine);
-                return RedirectToPage(new {id});
+                DateTime currentDate = DateTime.Now;
+                if (ProductLine.ExpiredDate < currentDate.AddDays(20))
+                {
+                    MessageError = "ExpiredDate phải lớn hơn hoặc bằng 20 ngày từ ngày hiện tại.";
+                    return RedirectToPage(new { id });
+                }
+                else
+                {
+                    var productLine = iProductLineService.SaveProductLine(ProductLine);
+                    return RedirectToPage(new { id });
+                }
+                
 
             }
             catch (Exception ex)

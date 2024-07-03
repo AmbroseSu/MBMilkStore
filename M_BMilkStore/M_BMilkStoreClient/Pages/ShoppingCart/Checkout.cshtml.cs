@@ -1,7 +1,8 @@
-using BussinessObject;
+﻿using BussinessObject;
 using M_BMilkStoreClient.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Service;
 using Service.Interfaces;
 using System.ComponentModel.DataAnnotations;
 
@@ -12,10 +13,12 @@ namespace M_BMilkStoreClient.Pages.ShoppingCart
 
         private readonly IUserService _userService;
         private readonly IOrderService _orderService;
+        private readonly IProductLineService iProductLineService;
         public CheckoutModel(IUserService userService, IOrderService orderService)
         {
             _userService = userService;
             _orderService = orderService;
+            iProductLineService = new ProductLineService();
         }
         public string? TotalPrice { get; private set; }
         [BindProperty]
@@ -102,23 +105,39 @@ namespace M_BMilkStoreClient.Pages.ShoppingCart
                         var cartItems = SessionService.GetSessionObjectAsJson<List<CartItem>>(HttpContext.Session, "cart");
                         if (cartItems != null && cartItems.Count > 0)
                         {
-                            var orderDetails = cartItems.Select(ci => new OrderDetail
-                            {
-                                ProductId = ci.Product.ProductId,
-                                ProductQuantity = ci.Quantity,
-                                ProductPrice = ci.Product.Price
-                            }).ToList();
+                            // Kiểm tra và trừ số lượng sản phẩm trong cart trước khi tạo order
+                            bool isQuantityDeducted = await CheckAndDeductProductQuantity(cartItems);
 
-                            if (float.TryParse(TotalPrice, out float parsedTotalPrice))
+                            if (isQuantityDeducted)
                             {
-                                int orderId = await _orderService.CreateOrderAsync(userId.Value, finalPrice, 1);
-                                bool isOrderDetailsCreated = await _orderService.CreateOrderDetailsAsync(orderId, orderDetails);
-                                IsUpdateSuccessful = isOrderDetailsCreated;
+                                // Tạo danh sách chi tiết đơn hàng
+                                var orderDetails = cartItems.Select(ci => new OrderDetail
+                                {
+                                    ProductId = ci.Product.ProductId,
+                                    ProductQuantity = ci.Quantity,
+                                    ProductPrice = ci.Product.Price
+                                }).ToList();
+
+                                // Tạo đơn hàng và chi tiết đơn hàng
+                                if (float.TryParse(TotalPrice, out float parsedTotalPrice))
+                                {
+                                    int orderId = await _orderService.CreateOrderAsync(userId.Value, finalPrice, 1);
+                                    bool isOrderDetailsCreated = await _orderService.CreateOrderDetailsAsync(orderId, orderDetails);
+                                    IsUpdateSuccessful = isOrderDetailsCreated;
+                                }
+                                else
+                                {
+                                    IsUpdateFailed = true;
+                                }
                             }
                             else
                             {
-                                IsUpdateFailed = true;
+                                IsUpdateFailed = true; // Đánh dấu lỗi nếu không đủ số lượng sản phẩm
                             }
+                        }
+                        else
+                        {
+                            IsUpdateFailed = true; // Đánh dấu lỗi nếu không có sản phẩm trong cart
                         }
                     }
                     catch
@@ -137,6 +156,74 @@ namespace M_BMilkStoreClient.Pages.ShoppingCart
                 return RedirectToPage("/Index");
             }
             return Page();
+        }
+
+
+
+        private async Task<bool> CheckAndDeductProductQuantity(List<CartItem> cartItems)
+        {
+            foreach (var cartItem in cartItems)
+            {
+                var productId = cartItem.Product.ProductId;
+                var requestedQuantity = cartItem.Quantity;
+
+                var validProductLines = await iProductLineService.GetProductLinesByProductId(productId);
+                       
+
+                int remainingQuantity = requestedQuantity; 
+                bool allProductsDeducted = true; 
+
+                foreach (var productLine in validProductLines)
+                {
+                    if (remainingQuantity <= 0)
+                        break; 
+
+                    int availableQuantity = productLine.Quantity; 
+
+                    if (availableQuantity >= remainingQuantity)
+                    {
+                        productLine.Quantity -= remainingQuantity;
+
+                        if (productLine.Quantity == 0)
+                        {
+                            productLine.Status = false; 
+                            productLine.IsDeleted = true; 
+                        }
+
+                        await iProductLineService.UpdateProductLine(productLine);
+                        remainingQuantity = 0; 
+                    }
+                    else
+                    {
+                       
+                        productLine.Quantity = 0; 
+
+                        productLine.Status = false;
+                        productLine.IsDeleted = true;
+
+                        await iProductLineService.UpdateProductLine(productLine);
+                        remainingQuantity -= availableQuantity; 
+
+                        allProductsDeducted = false; 
+                    }
+                }
+
+                if(remainingQuantity == 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    if (remainingQuantity > 0 && !allProductsDeducted)
+                    {
+                        return false;
+                    }
+                        
+                }
+                 
+            }
+
+            return true; 
         }
     }
 }
