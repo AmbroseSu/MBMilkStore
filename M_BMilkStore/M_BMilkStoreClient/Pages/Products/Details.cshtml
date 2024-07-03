@@ -91,18 +91,20 @@
                                 <input type="submit" value="Create" class="btn btn-primary" />
                             </div>
                         </form>
+                        
                     </div>
-                </div>
-                    </div>
-            <div class="card-body">
-                <h4 class="card-title">Product Lines</h4>
-                <table class="table">
                     @if (!string.IsNullOrEmpty(Model.MessageError))
                     {
                         <div class="alert alert-danger" role="alert">
                             @Model.MessageError
                         </div>
                     }
+                </div>
+                    </div>
+            <div class="card-body">
+                <h4 class="card-title">Product Lines</h4>
+                <table class="table">
+
                     <thead>
                         <tr>
                             <th>
@@ -131,9 +133,7 @@
                                     @Html.DisplayFor(modelItem => item.Product.Name)
                                 </td>
                                 <td>
-                                    <a asp-page="./Edit" asp-route-id="@item.ProductLineId">Edit</a> |
-                                    <a asp-page="./Details" asp-route-id="@item.ProductLineId">Details</a> |
-                                    <a asp-page="./Delete" asp-route-id="@item.ProductLineId">Delete</a>
+                                    <a asp-page="/ManagementProductLine/Delete" asp-route-id="@item.ProductLineId">Delete</a>
                                 </td>
                             </tr>
                         }

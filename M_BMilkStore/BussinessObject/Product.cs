@@ -24,7 +24,8 @@ namespace BussinessObject
         public bool? IsDeleted { get; set; }
         public int ProductBrandId { get; set; }
         public int ProductCategoryId { get; set; }
-
+        [NotMapped]
+        public int TotalQuantity { get; set; }
         public virtual ICollection<ProductLine>? ListProductLine { get; set; }
         public virtual ICollection<OrderDetail>? ListOrderDetail { get; set; }
         public virtual ProductBrand? ProductBrand { get; set; }

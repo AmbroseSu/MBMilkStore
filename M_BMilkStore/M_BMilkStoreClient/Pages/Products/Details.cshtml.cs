@@ -60,6 +60,10 @@ namespace M_BMilkStoreClient.Pages.Products
                 }
                 ViewData["ProductId"] = new SelectList(new List<Product> { Product }, "ProductId", "Name");
                 ProductLine = new ProductLine { ProductId = id.Value };
+                if (TempData.ContainsKey("MessageError"))
+                {
+                    MessageError = TempData["MessageError"].ToString();
+                }
                 return Page();
             }
             catch (Exception ex)
@@ -79,13 +83,32 @@ namespace M_BMilkStoreClient.Pages.Products
             try
             {
                 ProductLine.ProductId = id;
-                var productLine = iProductLineService.SaveProductLine(ProductLine);
-                return RedirectToPage(new {id});
+                DateTime currentDate = DateTime.Now;
+                if (ProductLine.Quantity <= 0)
+                {
+                    TempData["MessageError"] = "Quantity must be greater than 0";
+                    return RedirectToPage(new { id });
+                }
+                else
+                {
+                    if (ProductLine.ExpiredDate < currentDate.AddDays(20))
+                    {
+                        TempData["MessageError"] = "ExpiredDate must be greater than or equal to 20 days from the current date.";
+                        return RedirectToPage(new { id });
+                    }
+                    else
+                    {
+                        var productLine = iProductLineService.SaveProductLine(ProductLine);
+                        return RedirectToPage(new { id });
+                    }
+                    
+                }
+                
 
             }
             catch (Exception ex)
             {
-                MessageError = $"Error: {ex.Message}";
+                TempData["MessageError"] = $"Error: {ex.Message}";
                 return Page();
             }
 

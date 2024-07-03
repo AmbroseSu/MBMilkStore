@@ -125,7 +125,7 @@ namespace DataAccessLayer
             try
             {
                 using var context = new M_BMilkStoreDBContext();
-                return context.ProductLines.Where(proli => proli.ProductId.Equals(productId) && proli.ExpiredDate >= DateTime.Now && proli.Status == true && proli.IsDeleted == false)
+                return context.ProductLines.Where(proli => proli.ProductId.Equals(productId) && proli.ExpiredDate >= DateTime.Now.AddDays(20) && proli.Status == true && proli.IsDeleted == false)
                     .OrderBy(proli => proli.ExpiredDate).Include(pl => pl.Product).ToList();
             }
             catch (Exception ex) 
