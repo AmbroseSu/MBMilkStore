@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(M_BMilkStoreDBContext))]
-    [Migration("20240628125702_v1")]
+    [Migration("20240703030256_v1")]
     partial class v1
     {
         /// <inheritdoc />
@@ -176,11 +176,17 @@ namespace DataAccessLayer.Migrations
                     b.Property<DateTime>("ExpiredDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<bool?>("IsDeleted")
+                        .HasColumnType("bit");
+
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
+
+                    b.Property<bool?>("Status")
+                        .HasColumnType("bit");
 
                     b.HasKey("ProductLineId");
 

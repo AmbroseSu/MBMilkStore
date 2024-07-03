@@ -173,11 +173,17 @@ namespace DataAccessLayer.Migrations
                     b.Property<DateTime>("ExpiredDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<bool?>("IsDeleted")
+                        .HasColumnType("bit");
+
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
+
+                    b.Property<bool?>("Status")
+                        .HasColumnType("bit");
 
                     b.HasKey("ProductLineId");
 
