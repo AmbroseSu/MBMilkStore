@@ -2,6 +2,7 @@ using BussinessObject;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Service;
 using Service.Interfaces;
 
 namespace M_BMilkStoreClient.Pages
@@ -10,24 +11,39 @@ namespace M_BMilkStoreClient.Pages
     {
         private readonly ILogger<IndexModel> _logger;
         private readonly IProductService _productService;
+        private readonly IProductLineService iProductLineService;
         public IndexModel(ILogger<IndexModel> logger, IProductService productService)
         {
             _logger = logger;
             _productService = productService;
+            iProductLineService = new ProductLineService();
         }
 
         public IList<Product> Product { get; set; } = new List<Product>();
 
         public async Task OnGetAsync(string searchString)
         {
+            IList<Product> allProducts;
             if (!string.IsNullOrEmpty(searchString))
             {
-                Product = await _productService.GetProductByName(searchString);
+                allProducts = await _productService.GetProductByName(searchString);
             }
             else
             {
-                Product = await _productService.GetAllProduct();
+                allProducts = await _productService.GetAllProduct();
             }
+            Product = new List<Product>();
+
+            foreach (var product in allProducts)
+            {
+                var productLines = await iProductLineService.GetProductLinesByProductId(product.ProductId);
+                if (productLines != null && productLines.Any())
+                {
+                    Product.Add(product);
+                }
+            }
+
+
         }
     }
 }

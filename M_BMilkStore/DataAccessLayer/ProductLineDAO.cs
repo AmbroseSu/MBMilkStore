@@ -54,6 +54,8 @@ namespace DataAccessLayer
             {
                 using var context = new M_BMilkStoreDBContext();
                 context.ProductLines.Add(productLine);
+                productLine.Status = true;
+                productLine.IsDeleted = false;
                 context.SaveChanges();
 
 
@@ -123,7 +125,7 @@ namespace DataAccessLayer
             try
             {
                 using var context = new M_BMilkStoreDBContext();
-                return context.ProductLines.Where(proli => proli.ProductId.Equals(productId) && proli.ExpiredDate >= DateTime.Now)
+                return context.ProductLines.Where(proli => proli.ProductId.Equals(productId) && proli.ExpiredDate >= DateTime.Now && proli.Status == true && proli.IsDeleted == false)
                     .OrderBy(proli => proli.ExpiredDate).Include(pl => pl.Product).ToList();
             }
             catch (Exception ex) 
