@@ -16,5 +16,6 @@ namespace Repository.Interfaces
         public Task<List<User>> GetAllUsersAsync();
         public Task CreateUserAsync(User user);
         public Task DeleteUser(int userid);
+        public Task<PageResult<User>> GetUsersPagedAsync(int pageIndex, int pageSize, string searchString);
     }
 }

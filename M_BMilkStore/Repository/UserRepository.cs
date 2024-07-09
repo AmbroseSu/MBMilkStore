@@ -42,5 +42,10 @@ namespace Repository
         {
             return _userDAO.DeleteUserAsync(userid);
         }
+
+        public async Task<PageResult<User>> GetUsersPagedAsync(int pageIndex, int pageSize, string searchString)
+        {
+            return await _userDAO.GetUsersPagedAsync(pageIndex, pageSize, searchString);
+        }
     }
 }

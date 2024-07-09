@@ -50,6 +50,7 @@ namespace DataAccessLayer
             {
                 e.ToTable("UserRole");
                 e.HasKey(x => x.UserRoleId);
+                e.Property(x=>x.UserRoleId).ValueGeneratedNever();
                 e.Property(x => x.UserRoleName);
             });
             modelBuilder.Entity<User>(e =>

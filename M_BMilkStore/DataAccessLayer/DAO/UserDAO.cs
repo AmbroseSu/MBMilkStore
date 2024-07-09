@@ -118,6 +118,42 @@ namespace DataAccessLayer.DAO
                 await Console.Out.WriteLineAsync("Delete user fail");
             }
         }
+        public async Task<PageResult<User>> GetUsersPagedAsync(int pageIndex, int pageSize, string searchString)
+        {
+            var query = _dbContext.Users.Include(x=>x.UserRole).AsQueryable();
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                query = query.Where(u =>
+                                    u.Name.Contains(searchString) ||
+                                    u.Email.Contains(searchString) ||
+                                    u.Password.Contains(searchString) ||
+                                    u.Status.ToString().Contains(searchString) ||
+                                    u.IsDeleted.ToString().Contains(searchString) ||
+                                    u.UserRole.UserRoleName.Contains(searchString) ||
+                                    u.Address.Contains(searchString) ||
+                                    u.LastName.Contains(searchString) ||
+                                    u.FirstName.Contains(searchString)||
+                                    u.PhoneNumber.Contains(searchString)
+                                    );
+                                   
+            }
+
+            var totalItems = await query.CountAsync();
+
+            var users = await query
+                .Skip((pageIndex - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return new PageResult<User>
+            {
+                Items = users,
+                PageIndex = pageIndex,
+                PageSize = pageSize,
+                TotalItems = totalItems
+            };
+        }
 
     }
 }
