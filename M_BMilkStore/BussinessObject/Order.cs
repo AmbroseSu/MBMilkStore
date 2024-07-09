@@ -18,6 +18,7 @@ namespace BussinessObject
         public float OrderTotalAmount { get; set; }
         public int UserId { get; set; }
         public int? VoucherId { get; set; }
+        public bool isDeleted {  get; set; }
         public virtual User? User { get; set; }
         public virtual Voucher? Voucher { get; set; }
         public virtual ICollection<OrderDetail>? ListOrderDetail { get; set; }

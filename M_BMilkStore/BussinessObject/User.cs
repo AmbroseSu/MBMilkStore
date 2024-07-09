@@ -20,5 +20,6 @@ namespace BussinessObject
         public int RoleId { get; set; }
         public virtual UserRole? UserRole { get; set; }
         public virtual ICollection<Order>? ListOrder { get; set; }
+        public virtual ICollection<UserVoucher>? UserVouchers { get; set; }
     }
 }

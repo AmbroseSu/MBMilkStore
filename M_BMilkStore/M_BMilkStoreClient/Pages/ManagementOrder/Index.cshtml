@@ -1,0 +1,100 @@
+﻿@page
+@model M_BMilkStoreClient.Pages.ManagementOrder.IndexModel
+
+@{
+    ViewData["Title"] = "Order Management";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>@ViewData["Title"] - My ASP.NET Application</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <style>
+        .disabled-button {
+            pointer-events: none;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+    <section class="intro">
+        <div class="h-100">
+            <div class="d-flex align-items-center h-100">
+                <div class="container">
+                    <h1>Order Management</h1>
+                    <hr />
+                    <div class="row justify-content-center">
+                        <div class="col-12">
+                            <div class="card shadow-sm" style="background-color: #f5f7fa;">
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover mb-0">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">Order Date</th>
+                                                    <th scope="col">Order Total Amount</th>
+                                                    <th scope="col">User Email</th>
+                                                    <th scope="col">Voucher Name</th>
+                                                    <th scope="col">Status</th>
+                                                    <th scope="col">Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var order in Model.Orders)
+                                                {
+                                                    <tr>
+                                                        <td>@order.OrderDate</td>
+                                                        <td>@order.OrderTotalAmount</td>
+                                                        <td>@order.User.Email</td>
+                                                        <td>@order.Voucher?.VoucherName</td>
+                                                        <td>
+                                                            @if (order.Status)
+                                                            {
+                                                                <span class="badge text-bg-success">Completed</span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="badge text-bg-danger">Pending</span>
+                                                            }
+                                                        </td>
+                                                        <td>
+                                                            <a asp-page="./Edit" asp-route-id="@order.OrderId" class="btn btn-primary btn-sm px-3">
+                                                                <i class="fas fa-edit"></i>
+                                                            </a>
+                                                            <a asp-page="./Details" asp-route-id="@order.OrderId" class="btn btn-info btn-sm px-3">
+                                                                <i class="fas fa-info-circle"></i>
+                                                            </a>
+                                                            <a asp-page="./Delete" asp-route-id="@order.OrderId" class="btn btn-danger btn-sm px-3 @(order.Status ? "" : "disabled-button")">
+                                                                <i class="fas fa-times"></i>
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+
+                                        <nav aria-label="Page navigation">
+                                            <ul class="pagination pagination-sm justify-content-center">
+                                                @for (int i = 1; i <= Model.TotalPages; i++)
+                                                {
+                                                    <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                                                        <a class="page-link" href="?pageNumber=@i">@i</a>
+                                                    </li>
+                                                }
+                                            </ul>
+                                        </nav>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</body>
+</html>

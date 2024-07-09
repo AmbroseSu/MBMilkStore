@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace DataAccessLayer.Migrations
 {
     /// <inheritdoc />
-    public partial class v1 : Migration
+    public partial class Init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -57,7 +57,11 @@ namespace DataAccessLayer.Migrations
                     VoucherId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     VoucherName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    VoucherValue = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    VoucherValue = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    MinimumPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    CreationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ExpiryDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -157,7 +161,8 @@ namespace DataAccessLayer.Migrations
                     Status = table.Column<bool>(type: "bit", nullable: false),
                     OrderTotalAmount = table.Column<float>(type: "real", nullable: false),
                     UserId = table.Column<int>(type: "int", nullable: false),
-                    VoucherId = table.Column<int>(type: "int", nullable: true)
+                    VoucherId = table.Column<int>(type: "int", nullable: true),
+                    isDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -172,7 +177,35 @@ namespace DataAccessLayer.Migrations
                         name: "FK_Order_Voucher",
                         column: x => x.VoucherId,
                         principalTable: "Voucher",
-                        principalColumn: "VoucherId");
+                        principalColumn: "VoucherId",
+                        onDelete: ReferentialAction.SetNull);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserVoucher",
+                columns: table => new
+                {
+                    UserVoucherId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    VoucherId = table.Column<int>(type: "int", nullable: false),
+                    RedemptionDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserVoucher", x => x.UserVoucherId);
+                    table.ForeignKey(
+                        name: "FK_UserVoucher_User",
+                        column: x => x.UserId,
+                        principalTable: "User",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserVoucher_Voucher",
+                        column: x => x.VoucherId,
+                        principalTable: "Voucher",
+                        principalColumn: "VoucherId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -242,6 +275,16 @@ namespace DataAccessLayer.Migrations
                 name: "IX_User_RoleId",
                 table: "User",
                 column: "RoleId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserVoucher_UserId",
+                table: "UserVoucher",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserVoucher_VoucherId",
+                table: "UserVoucher",
+                column: "VoucherId");
         }
 
         /// <inheritdoc />
@@ -252,6 +295,9 @@ namespace DataAccessLayer.Migrations
 
             migrationBuilder.DropTable(
                 name: "ProductLine");
+
+            migrationBuilder.DropTable(
+                name: "UserVoucher");
 
             migrationBuilder.DropTable(
                 name: "Order");

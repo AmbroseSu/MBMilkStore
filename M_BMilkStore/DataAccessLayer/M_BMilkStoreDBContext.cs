@@ -1,11 +1,7 @@
 ﻿using BussinessObject;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
 
 namespace DataAccessLayer
 {
@@ -13,11 +9,12 @@ namespace DataAccessLayer
     {
         public M_BMilkStoreDBContext()
         {
-
         }
+
         public M_BMilkStoreDBContext(DbContextOptions<M_BMilkStoreDBContext> options) : base(options)
         {
         }
+
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<Order> Orders { get; set; }
         public virtual DbSet<OrderDetail> OrderDetails { get; set; }
@@ -27,6 +24,8 @@ namespace DataAccessLayer
         public virtual DbSet<Voucher> Vouchers { get; set; }
         public virtual DbSet<ProductLine> ProductLines { get; set; }
         public virtual DbSet<UserRole> UserRoles { get; set; }
+        public virtual DbSet<UserVoucher> UserVouchers { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -34,16 +33,18 @@ namespace DataAccessLayer
                 optionsBuilder.UseSqlServer(GetConnectionString());
             }
         }
+
         private string GetConnectionString()
         {
             IConfiguration config = new ConfigurationBuilder()
              .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json", true, true)
-            .Build();
-            var strConn = /*config["ConnectionStrings:DB"]*/ config.GetConnectionString("DB");
+             .AddJsonFile("appsettings.json", true, true)
+             .Build();
+            var strConn = config.GetConnectionString("DB");
 
             return strConn;
         }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<UserRole>(e =>
@@ -52,6 +53,7 @@ namespace DataAccessLayer
                 e.HasKey(x => x.UserRoleId);
                 e.Property(x => x.UserRoleName);
             });
+
             modelBuilder.Entity<User>(e =>
             {
                 e.ToTable("User");
@@ -66,20 +68,28 @@ namespace DataAccessLayer
                     .HasForeignKey(x => x.RoleId)
                     .HasConstraintName("FK_User_UserRole");
             });
+
             modelBuilder.Entity<Voucher>(e =>
             {
                 e.ToTable("Voucher");
                 e.HasKey(x => x.VoucherId);
                 e.Property(x => x.VoucherName);
-                e.Property(x => x.VoucherValue);
+                e.Property(x => x.VoucherValue)
+                    .HasColumnType("decimal(18, 2)");
+                e.Property(x => x.MinimumPrice)
+                    .HasColumnType("decimal(18, 2)");
+                e.Property(x => x.CreationDate);
+                e.Property(x => x.ExpiryDate);
             });
+
             modelBuilder.Entity<Order>(e =>
             {
                 e.ToTable("Order");
                 e.HasKey(x => x.OrderId);
-                e.Property(x => x.OrderDate);
+                e.Property(x => x.OrderDate).IsRequired();
                 e.Property(x => x.Status);
-                e.Property(x => x.OrderTotalAmount);
+                e.Property(x => x.OrderTotalAmount).IsRequired();
+                e.Property(x => x.isDeleted).IsRequired();
                 e.HasOne(x => x.User)
                     .WithMany(x => x.ListOrder)
                     .HasForeignKey(x => x.UserId)
@@ -87,8 +97,10 @@ namespace DataAccessLayer
                 e.HasOne(x => x.Voucher)
                     .WithMany(x => x.ListOrders)
                     .HasForeignKey(x => x.VoucherId)
-                    .HasConstraintName("FK_Order_Voucher");
+                    .HasConstraintName("FK_Order_Voucher")
+                    .OnDelete(DeleteBehavior.SetNull);
             });
+
             modelBuilder.Entity<OrderDetail>(e =>
             {
                 e.ToTable("OrderDetail");
@@ -104,6 +116,7 @@ namespace DataAccessLayer
                     .HasForeignKey(x => x.ProductId)
                     .HasConstraintName("FK_OrderDetail_Product");
             });
+
             modelBuilder.Entity<ProductLine>(e =>
             {
                 e.ToTable("ProductLine");
@@ -115,6 +128,7 @@ namespace DataAccessLayer
                     .HasForeignKey(x => x.ProductId)
                     .HasConstraintName("FK_ProductLine_Product");
             });
+
             modelBuilder.Entity<Product>(e =>
             {
                 e.ToTable("Product");
@@ -133,19 +147,35 @@ namespace DataAccessLayer
                     .WithMany(x => x.ListProduct)
                     .HasForeignKey(x => x.ProductCategoryId)
                     .HasConstraintName("FK_Product_ProductCategory");
-
             });
+
             modelBuilder.Entity<ProductBrand>(e =>
             {
                 e.ToTable("ProductBrand");
                 e.HasKey(x => x.ProductBrandId);
                 e.Property(x => x.Name);
             });
+
             modelBuilder.Entity<ProductCategory>(e =>
             {
                 e.ToTable("ProductCategory");
                 e.HasKey(x => x.ProductCategoryId);
                 e.Property(x => x.Name);
+            });
+
+            modelBuilder.Entity<UserVoucher>(e =>
+            {
+                e.ToTable("UserVoucher");
+                e.HasKey(x => x.UserVoucherId);
+                e.Property(x => x.RedemptionDate);
+                e.HasOne(x => x.User)
+                    .WithMany(x => x.UserVouchers)
+                    .HasForeignKey(x => x.UserId)
+                    .HasConstraintName("FK_UserVoucher_User");
+                e.HasOne(x => x.Voucher)
+                    .WithMany(x => x.UserVouchers)
+                    .HasForeignKey(x => x.VoucherId)
+                    .HasConstraintName("FK_UserVoucher_Voucher");
             });
         }
     }

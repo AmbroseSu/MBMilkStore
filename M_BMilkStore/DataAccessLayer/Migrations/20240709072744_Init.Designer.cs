@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(M_BMilkStoreDBContext))]
-    [Migration("20240703090649_v1")]
-    partial class v1
+    [Migration("20240709072744_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -47,6 +47,9 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<int?>("VoucherId")
                         .HasColumnType("int");
+
+                    b.Property<bool>("isDeleted")
+                        .HasColumnType("bit");
 
                     b.HasKey("OrderId");
 
@@ -260,6 +263,32 @@ namespace DataAccessLayer.Migrations
                     b.ToTable("UserRole", (string)null);
                 });
 
+            modelBuilder.Entity("BussinessObject.UserVoucher", b =>
+                {
+                    b.Property<int>("UserVoucherId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserVoucherId"));
+
+                    b.Property<DateTime>("RedemptionDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("VoucherId")
+                        .HasColumnType("int");
+
+                    b.HasKey("UserVoucherId");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("VoucherId");
+
+                    b.ToTable("UserVoucher", (string)null);
+                });
+
             modelBuilder.Entity("BussinessObject.Voucher", b =>
                 {
                     b.Property<int>("VoucherId")
@@ -268,13 +297,24 @@ namespace DataAccessLayer.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("VoucherId"));
 
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ExpiryDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<decimal>("MinimumPrice")
+                        .HasColumnType("decimal(18, 2)");
+
                     b.Property<string>("VoucherName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("VoucherValue")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<decimal>("VoucherValue")
+                        .HasColumnType("decimal(18, 2)");
 
                     b.HasKey("VoucherId");
 
@@ -293,6 +333,7 @@ namespace DataAccessLayer.Migrations
                     b.HasOne("BussinessObject.Voucher", "Voucher")
                         .WithMany("ListOrders")
                         .HasForeignKey("VoucherId")
+                        .OnDelete(DeleteBehavior.SetNull)
                         .HasConstraintName("FK_Order_Voucher");
 
                     b.Navigation("User");
@@ -366,6 +407,27 @@ namespace DataAccessLayer.Migrations
                     b.Navigation("UserRole");
                 });
 
+            modelBuilder.Entity("BussinessObject.UserVoucher", b =>
+                {
+                    b.HasOne("BussinessObject.User", "User")
+                        .WithMany("UserVouchers")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_UserVoucher_User");
+
+                    b.HasOne("BussinessObject.Voucher", "Voucher")
+                        .WithMany("UserVouchers")
+                        .HasForeignKey("VoucherId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_UserVoucher_Voucher");
+
+                    b.Navigation("User");
+
+                    b.Navigation("Voucher");
+                });
+
             modelBuilder.Entity("BussinessObject.Order", b =>
                 {
                     b.Navigation("ListOrderDetail");
@@ -391,6 +453,8 @@ namespace DataAccessLayer.Migrations
             modelBuilder.Entity("BussinessObject.User", b =>
                 {
                     b.Navigation("ListOrder");
+
+                    b.Navigation("UserVouchers");
                 });
 
             modelBuilder.Entity("BussinessObject.UserRole", b =>
@@ -401,6 +465,8 @@ namespace DataAccessLayer.Migrations
             modelBuilder.Entity("BussinessObject.Voucher", b =>
                 {
                     b.Navigation("ListOrders");
+
+                    b.Navigation("UserVouchers");
                 });
 #pragma warning restore 612, 618
         }
