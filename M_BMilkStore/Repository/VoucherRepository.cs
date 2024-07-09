@@ -57,5 +57,9 @@ namespace Repository
         {
             return VoucherDAO.Instance.HasUserAlreadyClaimedVoucherAsync(userId, voucherId);
         }
+        public Task<List<Voucher>> GetAllCurrentVouchersAsync()
+        {
+            return VoucherDAO.Instance.GetAllCurrentVouchersAsync();
+        }
     }
 }

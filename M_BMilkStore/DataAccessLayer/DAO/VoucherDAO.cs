@@ -193,5 +193,20 @@ namespace DataAccessLayer.DAO
             using var context = new M_BMilkStoreDBContext();
             return await context.UserVouchers.AnyAsync(uv => uv.UserId == userId && uv.VoucherId == voucherId);
         }
+
+        public async Task<List<Voucher>> GetAllCurrentVouchersAsync()
+        {
+            try
+            {
+                using var context = new M_BMilkStoreDBContext();
+                return await context.Vouchers
+                                    .Where(v => !v.IsDeleted && v.ExpiryDate > DateTime.UtcNow)
+                                    .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Failed to retrieve vouchers: {ex.Message}");
+            }
+        }
     }
 }

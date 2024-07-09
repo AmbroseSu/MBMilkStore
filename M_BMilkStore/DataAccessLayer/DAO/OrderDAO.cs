@@ -172,5 +172,28 @@ namespace DataAccessLayer.DAO
                 throw new Exception("Soft delete failed: " + ex.Message);
             }
         }
+
+        public async Task<List<Order>> GetOrderHistoryByUserIdAsync(int userId)
+        {
+            try
+            {
+                using (var context = new M_BMilkStoreDBContext())
+                {
+                    return await context.Orders
+                                        .Where(o => o.UserId == userId)
+                                        .Include(o => o.User)
+                                        .Include(o => o.Voucher)
+                                        .Include(o => o.ListOrderDetail)
+                                            .ThenInclude(od => od.Product)
+                                        .OrderByDescending(o => o.OrderDate)
+                                        .ToListAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Failed to retrieve order history: " + ex.Message);
+            }
+        }
+
     }
 }

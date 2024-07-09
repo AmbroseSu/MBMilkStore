@@ -1,0 +1,33 @@
+﻿@page
+@model M_BMilkStoreClient.Pages.UsersView.VouchersModel
+@{
+    ViewData["Title"] = "Current Vouchers";
+}
+
+<h2>Current Vouchers</h2>
+
+@if (Model.Vouchers == null || !Model.Vouchers.Any())
+{
+    <p>No vouchers available at the moment.</p>
+}
+else
+{
+    <div class="row">
+        @foreach (var voucher in Model.Vouchers)
+        {
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">@voucher.VoucherName</h5>
+                        <p class="card-text">
+                            <small class="text-muted">Expires on @voucher.ExpiryDate.ToShortDateString()</small>
+                        </p>
+                        <p class="card-text">
+                            <small class="text-muted">Minimum Order: € @voucher.MinimumPrice.ToString("0.00")</small>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}

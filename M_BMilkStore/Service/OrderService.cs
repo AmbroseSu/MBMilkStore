@@ -38,5 +38,9 @@ namespace Service
         {
             return _repository.SoftDeleteOrderAsync(orderId);
         }
+        public Task<List<Order>> GetOrderHistoryByUserIdAsync(int userId)
+        {
+            return _repository.GetOrderHistoryByUserIdAsync(userId);
+        }
     }
 }

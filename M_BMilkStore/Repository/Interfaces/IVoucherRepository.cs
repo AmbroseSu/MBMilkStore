@@ -21,5 +21,6 @@ namespace Repository.Interfaces
         Task<Voucher> GetVoucherByCodeAsync(string voucherCode);
         Task ClaimVoucherAsync(int userId, int voucherId);
         Task<bool> HasUserAlreadyClaimedVoucherAsync(int userId, int voucherId);
+        Task<List<Voucher>> GetAllCurrentVouchersAsync();
     }
 }
