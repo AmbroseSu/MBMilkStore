@@ -2,3 +2,55 @@
 @model M_BMilkStoreClient.Pages.Admin.AdminPageModel
 @{
 }
+@{
+    ViewData["Title"] = "Account List";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>UseId</th>
+            <th>Name</th>
+            <th>LastName</th>
+            <th>FirstName</th>
+            <th>Address</th>
+            <th>Email</th>
+            <th>Password</th>
+            <th>PhoneNumber</th>
+            <th>UserRoleName</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Users)
+        {
+            <tr>
+                <td>@item.UserId</td>
+                <td>@item.Name</td>
+                <td>@item.LastName</td>
+                <td>@item.FirstName</td>
+                <td>@item.Address</td>
+                <td >@item.Email</td>
+                <td>
+                    @if (!string.IsNullOrEmpty(item.Password))
+                    {
+                        <span>***********</span>
+                    }
+                </td>
+                <td>@item.PhoneNumber</td>
+                <td>@item.UserRole.UserRoleName</td>
+                <td>@(item.Status ? "Active" : "Inactive")</td>
+                <td>@(item.IsDeleted ? "Delete" : "Non-Delete")</td>
+                <td>
+                    <a asp-page="/Admin/EditUser" asp-route-id="@item.UserId">Edit</a> |
+                    <a asp-page="/Admin/DeleteUser" asp-route-id="@item.UserId">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a asp-page="/Admin/CreateUser">Create New Account</a>

@@ -1,0 +1,76 @@
+﻿@page
+@model M_BMilkStoreClient.Pages.Admin.EditUserModel
+@{
+    ViewData["Title"] = "Edit Account";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form method="post">
+    <input type="hidden" asp-for="User.UserId" />
+    <div class="form-group">
+        <label asp-for="User.LastName"></label>
+        <input asp-for="User.LastName"class="form-control" />
+        <span asp-validation-for="User.LastName" class="text-danger"></span>
+    </div>
+    
+    <div class="form-group">
+        <label asp-for="User.FirstName"></label>
+        <input asp-for="User.FirstName" class="form-control" />
+        <span asp-validation-for="User.FirstName" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="User.Address"></label>
+        <input asp-for="User.Address" class="form-control" />
+        <span asp-validation-for="User.Address" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="User.Name"></label>
+        <input asp-for="User.Name" class="form-control" readonly />
+        <span asp-validation-for="User.Name" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="User.Email"></label>
+        <input asp-for="User.Email" class="form-control" readonly />
+        <span asp-validation-for="User.Email" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="User.Password"></label>
+        <input asp-for="User.Password" class="form-control" readonly onfocus="this.removeAttribute('readonly');" value="**********" />
+        <span asp-validation-for="User.Password" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="User.Status"></label>
+        <select asp-for="User.Status" class="form-control">
+            <option value="">Select</option>
+            <option value="true">Yes</option>
+            <option value="false">No</option>
+        </select>
+        <span asp-validation-for="User.Status" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="User.IsDeleted"></label>
+        <select asp-for="User.IsDeleted" class="form-control">
+            <option value="">Select</option>
+            <option value="true">Yes</option>
+            <option value="false">No</option>
+        </select>
+        <span asp-validation-for="User.IsDeleted" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="User.RoleId"></label>
+        <select asp-for="User.RoleId" class="form-control" asp-items="Model.UserRoles">
+            <option value="">Select Role</option>
+        </select>
+        <span asp-validation-for="User.RoleId" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-page="/Admin/AdminPage" class="btn btn-secondary">Cancel</a>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

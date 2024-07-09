@@ -15,8 +15,8 @@ namespace BussinessObject
         public string Email { get; set; }
         public string Password { get; set; }
         public string? PhoneNumber { get; set; }
-        public bool? Status { get; set; }
-        public bool? IsDeleted { get; set; }
+        public bool Status { get; set; }
+        public bool IsDeleted { get; set; }
         public int RoleId { get; set; }
         public virtual UserRole? UserRole { get; set; }
         public virtual ICollection<Order>? ListOrder { get; set; }

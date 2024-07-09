@@ -130,7 +130,7 @@ namespace M_BMilkStoreClient.Pages
                 Password = RegisterInput.Password
             };
 
-            var result = await _userService.CreateUserAsync(user);
+            var result = await _userService.CreateCustomerAsync(user);
 
             if (result)
             {
