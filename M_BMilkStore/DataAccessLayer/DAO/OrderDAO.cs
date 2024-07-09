@@ -1,4 +1,5 @@
 ﻿using BussinessObject;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,7 +38,7 @@ namespace DataAccessLayer.DAO
                     {
                         UserId = userId,
                         OrderDate = DateTime.UtcNow,
-                        Status = true,
+                        Status = false,
                         OrderTotalAmount = orderTotalAmount,
                         VoucherId = voucherId,
                     };
@@ -73,6 +74,102 @@ namespace DataAccessLayer.DAO
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<(List<Order>, int)> GetOrdersAsync(int pageNumber, int pageSize)
+        {
+            try
+            {
+                using (var context = new M_BMilkStoreDBContext())
+                {
+                    var totalOrders = await context.Orders.CountAsync();
+                    var orders = await context.Orders
+                                               .Where(o => !o.isDeleted)
+                                              .Include(o => o.User)
+                                              .Include(o => o.Voucher)
+                                              .Include(o => o.ListOrderDetail)
+                                              .OrderByDescending(o => o.OrderDate)
+                                              .Skip((pageNumber - 1) * pageSize)
+                                              .Take(pageSize)
+                                              .ToListAsync();
+                    return (orders, totalOrders);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Failed to retrieve orders: " + ex.Message);
+            }
+        }
+
+        public async Task<Order> GetOrderByIdAsync(int orderId)
+        {
+            try
+            {
+                using (var context = new M_BMilkStoreDBContext())
+                {
+                    return await context.Orders
+                                        .Include(o => o.User)
+                                        .Include(o => o.Voucher)
+                                        .Include(o => o.ListOrderDetail)
+                                            .ThenInclude(od => od.Product)
+                                        .FirstOrDefaultAsync(o => o.OrderId == orderId);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Failed to retrieve order: " + ex.Message);
+            }
+        }
+
+
+        public async Task<bool> UpdateOrderAsync(Order order)
+        {
+            try
+            {
+                using (var context = new M_BMilkStoreDBContext())
+                {
+                    var existingOrder = await context.Orders.FindAsync(order.OrderId);
+                    if (existingOrder == null)
+                    {
+                        throw new Exception("Order not found.");
+                    }
+
+                    existingOrder.Status = order.Status;
+                    existingOrder.OrderTotalAmount = order.OrderTotalAmount;
+                    existingOrder.VoucherId = order.VoucherId; // Ensure this line is present
+                    context.Orders.Update(existingOrder);
+                    await context.SaveChangesAsync();
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Update Failed: " + ex.Message);
+            }
+        }
+
+        public async Task<bool> SoftDeleteOrderAsync(int orderId)
+        {
+            try
+            {
+                using (var context = new M_BMilkStoreDBContext())
+                {
+                    var order = await context.Orders.FindAsync(orderId);
+                    if (order == null)
+                    {
+                        throw new Exception("Order not found.");
+                    }
+
+                    order.isDeleted = true;
+                    context.Orders.Update(order);
+                    await context.SaveChangesAsync();
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Soft delete failed: " + ex.Message);
             }
         }
     }

@@ -22,5 +22,21 @@ namespace Service
             => await _repository.CreateOrderAsync(userId, orderTotalAmount, voucherId);
         public async Task<bool> CreateOrderDetailsAsync(int orderId, List<OrderDetail> orderDetails)
             => await _repository.CreateOrderDetailsAsync(orderId, orderDetails);
+        public Task<(List<Order>, int)> GetOrdersAsync(int pageNumber, int pageSize)
+        {
+            return _repository.GetOrdersAsync(pageNumber, pageSize);
+        }
+        public Task<Order> GetOrderByIdAsync(int orderId)
+        {
+            return _repository.GetOrderByIdAsync(orderId);
+        }
+        public Task<bool> UpdateOrderAsync(Order order)
+        {
+            return _repository.UpdateOrderAsync(order);
+        }
+        public Task<bool> SoftDeleteOrderAsync(int orderId)
+        {
+            return _repository.SoftDeleteOrderAsync(orderId);
+        }
     }
 }

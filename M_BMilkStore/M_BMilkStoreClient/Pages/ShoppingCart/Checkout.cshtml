@@ -10,9 +10,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>@ViewData["Title"] - My ASP.NET Application</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
-    <link rel="stylesheet" href="~/lib//bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/lib/toastr.js/toastr.min.css" />
-    <link rel="stylesheet" href="~/css//font-awesome/css/all.min.css" />
+    <link rel="stylesheet" href="~/css/font-awesome/css/all.min.css" />
 </head>
 <body>
     <section>
@@ -20,20 +20,20 @@
             <div class="col-md-8 mb-4">
                 <div class="card mb-4">
                     <div class="card-header py-3">
-                        <h5 class="mb-0">Biling details</h5>
+                        <h5 class="mb-0">Billing details</h5>
                     </div>
                     <div class="card-body">
                         <form method="post">
                             <!-- 2 column grid layout with text inputs for the first and last names -->
                             <div class="row mb-4">
                                 <div class="col">
-                                    <div data-mdb-input-init class="form-outline">
+                                    <div class="form-outline">
                                         <input type="text" id="form6Example1" name="FirstName" class="form-control" value="@Model.FirstName" />
                                         <label class="form-label" for="form6Example1">First name</label>
                                     </div>
                                 </div>
                                 <div class="col">
-                                    <div data-mdb-input-init class="form-outline">
+                                    <div class="form-outline">
                                         <input type="text" id="form6Example2" name="LastName" class="form-control" value="@Model.LastName" />
                                         <label class="form-label" for="form6Example2">Last name</label>
                                     </div>
@@ -41,19 +41,19 @@
                             </div>
 
                             <!-- Text input -->
-                            <div data-mdb-input-init class="form-outline mb-4">
+                            <div class="form-outline mb-4">
                                 <input type="text" id="form6Example4" name="Address" class="form-control" value="@Model.Address" />
                                 <label class="form-label" for="form6Example4">Address</label>
                             </div>
 
                             <!-- Email input -->
-                            <div data-mdb-input-init class="form-outline mb-4">
+                            <div class="form-outline mb-4">
                                 <input type="email" id="form6Example5" name="Email" class="form-control" value="@Model.Email" />
                                 <label class="form-label" for="form6Example5">Email</label>
                             </div>
 
                             <!-- Number input -->
-                            <div data-mdb-input-init class="form-outline mb-4">
+                            <div class="form-outline mb-4">
                                 <input type="number" id="form6Example6" name="PhoneNumber" class="form-control" value="@Model.PhoneNumber" />
                                 <label class="form-label" for="form6Example6">Phone</label>
                             </div>
@@ -68,7 +68,7 @@
                             </div>
 
                             <input type="hidden" name="TotalPrice" value="@Model.TotalPrice" />
-                            <button data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-lg btn-block" type="submit">
+                            <button class="btn btn-primary btn-lg btn-block" type="submit">
                                 Submit
                             </button>
                         </form>
@@ -77,6 +77,20 @@
             </div>
 
             <div class="col-md-4 mb-4">
+                <div class="card mb-4">
+                    <div class="card-header py-3">
+                        <h5 class="mb-0">Apply Voucher</h5>
+                    </div>
+                    <div class="card-body">
+                        <form method="post" asp-page-handler="ApplyVoucher">
+                            <div class="form-group">
+                                <label for="voucherCode">Enter your voucher code</label>
+                                <input type="text" id="voucherCode" name="VoucherCode" class="form-control" />
+                            </div>
+                            <button type="submit" class="btn btn-primary">Apply</button>
+                        </form>
+                    </div>
+                </div>
                 <div class="card mb-4">
                     <div class="card-header py-3">
                         <h5 class="mb-0">Summary</h5>
@@ -91,6 +105,13 @@
                                 Delivery
                                 <span>@Model.DeliveryOptionName - @Model.DeliveryOptionValue</span>
                             </li>
+                            @if (Model.IsVoucherApplied)
+                            {
+                                <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                    Discount:
+                                    <span>@Model.VoucherCode - @Model.VoucherValue</span>
+                                </li>
+                            }
                             <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 mb-3">
                                 <div>
                                     <strong>Total amount</strong>
@@ -128,19 +149,10 @@
                 "hideMethod": "fadeOut"
             };
 
-        @if (Model.IsUpdateSuccessful)
+        @if (!string.IsNullOrEmpty(TempData["ToastMessage"] as string))
         {
             <text>
-                    toastr.success('Create Order!', 'Success');
-                setTimeout(function () {
-                    window.location.href = '/Index';
-                }, 6000); // 6000 milliseconds = 6 seconds
-            </text>
-        }
-        @if (Model.IsUpdateFailed)
-        {
-            <text>
-                    toastr.error('Update failed!', 'Error');
+                    toastr["@TempData["ToastType"]"]("@TempData["ToastMessage"]");
             </text>
         }
                 });

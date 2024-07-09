@@ -16,5 +16,22 @@ namespace Repository
 
         public async Task<bool> CreateOrderDetailsAsync(int orderId, List<OrderDetail> orderDetails) 
             => await OrderDAO.Instance.CreateOrderDetailsAsync(orderId, orderDetails);
+        public Task<(List<Order>, int)> GetOrdersAsync(int pageNumber, int pageSize)
+        {
+            return OrderDAO.Instance.GetOrdersAsync(pageNumber, pageSize);
+        }
+
+        public Task<Order> GetOrderByIdAsync(int orderId)
+        {
+            return OrderDAO.Instance.GetOrderByIdAsync(orderId);
+        }
+        public Task<bool> UpdateOrderAsync(Order order)
+        {
+            return OrderDAO.Instance.UpdateOrderAsync(order);
+        }
+        public Task<bool> SoftDeleteOrderAsync(int orderId)
+        {
+            return OrderDAO.Instance.SoftDeleteOrderAsync(orderId);
+        }
     }
 }

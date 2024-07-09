@@ -1,0 +1,54 @@
+﻿@page
+@model M_BMilkStoreClient.Pages.ManagementVoucher.CreateModel
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h4>Create Voucher</h4>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            @if (!string.IsNullOrEmpty(Model.MessageError))
+            {
+                <div class="alert alert-danger" role="alert">
+                    @Model.MessageError
+                </div>
+            }
+            <div class="form-group">
+                <label asp-for="Voucher.VoucherName" class="control-label">Voucher Name</label>
+                <input asp-for="Voucher.VoucherName" class="form-control" />
+                <span asp-validation-for="Voucher.VoucherName" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Voucher.VoucherValue" class="control-label">Voucher Value</label>
+                <input asp-for="Voucher.VoucherValue" class="form-control" />
+                <span asp-validation-for="Voucher.VoucherValue" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Voucher.MinimumPrice" class="control-label">Minimum Price</label>
+                <input asp-for="Voucher.MinimumPrice" class="form-control" />
+                <span asp-validation-for="Voucher.MinimumPrice" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Voucher.ExpiryDate" class="control-label">Expiry Date</label>
+                <input asp-for="Voucher.ExpiryDate" type="date" class="form-control" />
+                <span asp-validation-for="Voucher.ExpiryDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Save</button>
+                <a asp-page="Index" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
