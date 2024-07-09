@@ -45,7 +45,7 @@ namespace M_BMilkStoreClient.Pages.Admin
             }
             existingUser.Name = User.Name;
             existingUser.Email = User.Email;
-            existingUser.Password = User.Password;
+            
             existingUser.RoleId = User.RoleId;
             existingUser.Status = User.Status;
             existingUser.IsDeleted = User.IsDeleted;

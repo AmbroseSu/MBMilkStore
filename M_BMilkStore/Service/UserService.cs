@@ -50,5 +50,10 @@ namespace Service
         {
             return _repository.DeleteUser(userid);
         }
+
+        public async Task<PageResult<User>> GetUsersPagedAsync(int pageIndex, int pageSize, string searchString)
+        {
+            return await _repository.GetUsersPagedAsync(pageIndex, pageSize, searchString);
+        }
     }
 }

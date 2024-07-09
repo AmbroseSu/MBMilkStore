@@ -3,10 +3,21 @@
 @{
 }
 @{
-    ViewData["Title"] = "Account List";
+    ViewData["Title"] = "User Management";
 }
 
 <h2>@ViewData["Title"]</h2>
+<form method="get">
+    <div class="form-row align-items-center">
+        <div class="col-auto">
+            <label class="sr-only" for="searchString">Search</label>
+            <input type="text" class="form-control mb-2" id="searchString" name="SearchString" placeholder="Search by name or email" value="@Model.SearchString">
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary mb-2">Search</button>
+        </div>
+    </div>
+</form>
 
 <table class="table">
     <thead>
@@ -52,5 +63,38 @@
         }
     </tbody>
 </table>
+@if (Model.TotalPages > 1)
+{
+    <nav>
+        <ul class="pagination">
+            @if (Model.PageIndex > 1)
+            {
+                <li class="page-item">
+                    <a class="page-link" asp-page="/Admin/AdminPage" asp-route-pageIndex="1">First</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" asp-page="/Admin/AdminPage" asp-route-pageIndex="@(Model.PageIndex - 1)">Previous</a>
+                </li>
+            }
+
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item @(i == Model.PageIndex ? "active" : "")">
+                    <a class="page-link" asp-page="/Admin/AdminPage" asp-route-pageIndex="@i">@i</a>
+                </li>
+            }
+
+            @if (Model.PageIndex < Model.TotalPages)
+            {
+                <li class="page-item">
+                    <a class="page-link" asp-page="/Admin/AdminPage" asp-route-pageIndex="@(Model.PageIndex + 1)">Next</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" asp-page="/Admin/AdminPage" asp-route-pageIndex="@Model.TotalPages">Last</a>
+                </li>
+            }
+        </ul>
+    </nav>
+}
 
 <a asp-page="/Admin/CreateUser">Create New Account</a>
