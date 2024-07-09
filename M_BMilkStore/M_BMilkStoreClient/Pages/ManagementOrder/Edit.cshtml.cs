@@ -71,6 +71,7 @@ namespace M_BMilkStoreClient.Pages.ManagementOrder
             return RedirectToPage("./Index");
         }
 
+
         private async Task<bool> OrderExists(int id)
         {
             var order = await _orderService.GetOrderByIdAsync(id);

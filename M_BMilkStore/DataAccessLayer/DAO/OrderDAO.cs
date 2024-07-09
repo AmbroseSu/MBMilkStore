@@ -137,7 +137,7 @@ namespace DataAccessLayer.DAO
 
                     existingOrder.Status = order.Status;
                     existingOrder.OrderTotalAmount = order.OrderTotalAmount;
-                    existingOrder.VoucherId = order.VoucherId;
+                    existingOrder.VoucherId = order.VoucherId; // Ensure this line is present
                     context.Orders.Update(existingOrder);
                     await context.SaveChangesAsync();
                     return true;
