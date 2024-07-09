@@ -15,7 +15,7 @@ namespace M_BMilkStoreClient.Pages.ManagementVoucher
     public class EditModel : PageModel
     {
         private readonly IVoucherService _voucherService;
-        public bool IsStaff => HttpContext.Session.GetString("UserRole") == "Staff";
+        public bool IsAdmin => HttpContext.Session.GetString("UserRole") == "Admin";
         public EditModel(IVoucherService voucherService)
         {
             _voucherService = voucherService;
@@ -26,7 +26,7 @@ namespace M_BMilkStoreClient.Pages.ManagementVoucher
 
         public async Task<IActionResult> OnGetAsync(int id)
         {
-            if (IsStaff)
+            if (IsAdmin)
             {
                 if (id == 0)
                 {

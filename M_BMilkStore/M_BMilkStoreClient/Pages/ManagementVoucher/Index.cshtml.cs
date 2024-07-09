@@ -16,7 +16,7 @@ namespace M_BMilkStoreClient.Pages.ManagementVoucher
     {
 
         private readonly IVoucherService _voucherService;
-        public bool IsStaff => HttpContext.Session.GetString("UserRole") == "Staff";
+        public bool IsAdmin => HttpContext.Session.GetString("UserRole") == "Admin";
         public IndexModel(IVoucherService voucherService)
         {
             _voucherService = voucherService;
@@ -29,7 +29,7 @@ namespace M_BMilkStoreClient.Pages.ManagementVoucher
 
         public async Task OnGetAsync(int pageNumber = 1)
         {
-           if(IsStaff)
+           if(IsAdmin)
             {
                 PageNumber = pageNumber;
                 int pageSize = 5;
