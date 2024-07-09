@@ -26,13 +26,21 @@ namespace DataAccessLayer.DAO
                 return null;
             }
         }
-        public async Task<bool> AddUserAsync(User user)
+        public async Task<bool> AddCustomersync(User user)
         {
-            user.RoleId = 2;
-            user.Status = true;
-            user.IsDeleted = false;
-            _dbContext.Users.Add(user);
-            return await _dbContext.SaveChangesAsync() > 0;
+            try
+            {
+                user.RoleId = 2;
+                user.Status = true;
+                user.IsDeleted = false;
+                _dbContext.Users.Add(user);
+                return await _dbContext.SaveChangesAsync() > 0;
+            }
+            catch(Exception ex)
+            {
+                await Console.Out.WriteLineAsync("Add Customer fail");
+                return false;
+            }
         }
 
         public async Task<User> GetUserByID(int id)
@@ -72,5 +80,44 @@ namespace DataAccessLayer.DAO
                 throw new Exception("Updateing User Failed: " + ex.Message);
             }
         }
+        public async Task<List<User>> GetUsersAsync()
+        {
+            try
+            {
+                var users = await _dbContext.Users.Include(u => u.UserRole).ToListAsync();
+                return users;
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync("Get List of user fail");
+                return null;
+            }
+        }
+        public async Task AddUserAsync(User user)
+        {
+            try
+            {
+                 _dbContext.Users.Add(user);
+                await _dbContext.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync("Create user fail");
+            }
+        }
+       public async Task DeleteUserAsync(int id)
+        {
+            try
+            {
+                var user = await GetUserByID(id);
+                user.IsDeleted = true;
+                _dbContext.Update(user);
+                await _dbContext.SaveChangesAsync();
+            }catch(Exception e)
+            {
+                await Console.Out.WriteLineAsync("Delete user fail");
+            }
+        }
+
     }
 }
