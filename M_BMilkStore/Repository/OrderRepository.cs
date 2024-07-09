@@ -33,5 +33,9 @@ namespace Repository
         {
             return OrderDAO.Instance.SoftDeleteOrderAsync(orderId);
         }
+        public Task<List<Order>> GetOrderHistoryByUserIdAsync(int userId)
+        {
+            return OrderDAO.Instance.GetOrderHistoryByUserIdAsync(userId);
+        }
     }
 }

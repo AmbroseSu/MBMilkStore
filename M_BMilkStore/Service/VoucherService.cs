@@ -61,5 +61,9 @@ namespace Service
         {
             return _voucherRepository.HasUserAlreadyClaimedVoucherAsync(userId, voucherId);
         }
+        public Task<List<Voucher>> GetAllCurrentVouchersAsync()
+        {
+            return _voucherRepository.GetAllCurrentVouchersAsync();
+        }
     }
 }

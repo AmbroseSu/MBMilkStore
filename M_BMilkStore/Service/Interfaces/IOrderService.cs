@@ -16,5 +16,6 @@ namespace Service.Interfaces
         Task<Order> GetOrderByIdAsync(int orderId);
         Task<bool> UpdateOrderAsync(Order order);
         Task<bool> SoftDeleteOrderAsync(int orderId);
+        Task<List<Order>> GetOrderHistoryByUserIdAsync(int userId);
     }
 }

@@ -21,6 +21,6 @@ namespace BussinessObject
         public bool isDeleted {  get; set; }
         public virtual User? User { get; set; }
         public virtual Voucher? Voucher { get; set; }
-        public virtual ICollection<OrderDetail>? ListOrderDetail { get; set; }
+        public ICollection<OrderDetail> ListOrderDetail { get; set; } = new List<OrderDetail>();
     }
 }

@@ -1,0 +1,47 @@
+﻿@page
+@model M_BMilkStoreClient.Pages.UsersView.OrderHistoryModel
+
+@{
+    ViewData["Title"] = "Order History";
+}
+<h2>Order History</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Order Date</th>
+            <th>Total Amount</th>
+            <th>Voucher</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Orders == null || !Model.Orders.Any())
+        {
+            <tr>
+                <td colspan="4" class="text-center">No Orders</td>
+            </tr>
+        }
+        else
+        {
+            @foreach (var order in Model.Orders)
+            {
+                <tr>
+                    <td>@order.OrderDate.ToShortDateString()</td>
+                    <td>€ @order.OrderTotalAmount.ToString("0.00")</td>
+                    <td>@(order.Voucher != null ? order.Voucher.VoucherName : "None")</td>
+                    <td>
+                        @if (order.Status)
+                        {
+                            <span class="badge bg-success">Completed</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger">Pending</span>
+                        }
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
