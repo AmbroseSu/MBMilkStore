@@ -10,7 +10,7 @@ namespace BussinessObject
 {
     public class UserRole
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        
         [Key]
         public int UserRoleId {  get; set; }
         public string UserRoleName {  get; set; }

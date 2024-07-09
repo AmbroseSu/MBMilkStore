@@ -17,7 +17,7 @@ namespace Service
             _repository = repository;
         }
 
-        public async Task<bool> CreateUserAsync(User user)
+        public async Task<bool> CreateCustomerAsync(User user)
         {
             var existingUser = await _repository.GetAnUserByEmail(user.Email);
             if (existingUser != null)
@@ -25,7 +25,7 @@ namespace Service
                 return false;
             }
 
-            await _repository.AddUserAsync(user);
+            await _repository.AddCustomerAsync(user);
             return true;
         }
 
@@ -36,5 +36,19 @@ namespace Service
 
         public async Task<User> GetUserByID(int id) => await _repository.GetUserByID(id);
         public async Task<bool> UpdateUserAsync(User updatedUser) => await _repository.UpdateUserAsync(updatedUser);
+        public async Task<List<User>> GetAllUsersAsync()
+        {
+            return await _repository.GetAllUsersAsync();
+        }
+
+        public async Task CreateUserAsync(User user)
+        {
+             await _repository.CreateUserAsync(user);
+        }
+
+        public Task DeleteUserAsync(int userid)
+        {
+            return _repository.DeleteUser(userid);
+        }
     }
 }
