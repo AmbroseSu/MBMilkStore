@@ -37,19 +37,35 @@
     <div class="wrapper d-flex flex-column min-vh-100">
     <header id="header" class="header d-flex align-items-center sticky-top">
         <div class="container position-relative d-flex align-items-center justify-content-between">
+            @if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") != "Admin")
+            {
             <a asp-page="/Index" class="logo d-flex align-items-center me-auto me-xl-0">
                 <!-- Uncomment the line below if you also wish to use an image logo -->
                 <!-- <img src="assets/img/logo.png" alt=""> -->
                 <h1 class="sitename">M&BMilk Store</h1>
                 <span>.</span>
             </a>
-
+            }
+            @if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Admin")
+            {
+               <a asp-page="/Admin/AdminPage" class="logo d-flex align-items-center me-auto me-xl-0">
+                  <!-- Uncomment the line below if you also wish to use an image logo -->
+                  <!-- <img src="assets/img/logo.png" alt=""> -->
+                  <h1 class="sitename">M&BMilk Store</h1>
+                  <span>.</span>
+               </a>
+            }
             <nav id="navmenu" class="navmenu">
                 <ul>
-                    <li><a asp-page="/UsersView/OrderHistory">History Order</a></li>
-                    <li><a asp-page="/UsersView/Vouchers">Vouchers</a></li>
+                        @if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Customer")
+                        {
+                            <li><a asp-page="/UsersView/OrderHistory">History Order</a></li>
+                            <li><a asp-page="/UsersView/Vouchers">Vouchers</a></li>
+                            <li><a asp-page="/ViewProfile">View Profile</a></li>
+                        }
+                    
                     <li><a asp-page="/Index" class="active">Home<br></a></li>
-                    <li><a href="#about">About</a></li>
+                    
                     <li><a asp-page="/Index">Menu</a></li>
                     @if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Staff")
                     {
@@ -59,12 +75,14 @@
                         <li><a asp-page="/ManagementCategory/Index">Category</a></li>
                         <li><a asp-page="/ManagementBrand/Index">Brand</a></li>
                         <li><a asp-page="/ManagementOrder/Index">Order</a></li>
+
                         }
                         @if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Admin")
                         {
                             <li><a asp-page="/ManagementVoucher/Index">Voucher</a></li>
+                            
                         }
-                        <li class="dropdown">
+                        @* <li class="dropdown">
                         <a href="#"><span>Dropdown</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
                         <ul>
                             <li><a href="#">Dropdown 1</a></li>
@@ -82,8 +100,8 @@
                             <li><a href="#">Dropdown 3</a></li>
                             <li><a href="#">Dropdown 4</a></li>
                         </ul>
-                    </li>
-                    <li><a href="#contact">Contact</a></li>
+                    </li> *@
+                        
                 </ul>
                 <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
             </nav>

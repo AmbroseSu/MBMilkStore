@@ -1,0 +1,50 @@
+﻿@page
+@model M_BMilkStoreClient.Pages.EditProfileModel
+@{
+    ViewData["Title"] = "Edit Profile";
+}
+<h2>@ViewData["Title"]</h2>
+
+<h4>Edit User Profile</h4>
+<hr />
+<div>
+    <form method="post">
+        <div class="form-group">
+            <label asp-for="User.LastName" class="control-label"></label>
+            <input asp-for="User.LastName" class="form-control" />
+            <span asp-validation-for="User.LastName" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="User.FirstName" class="control-label"></label>
+            <input asp-for="User.FirstName" class="form-control" />
+            <span asp-validation-for="User.FirstName" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="User.Address" class="control-label"></label>
+            <input asp-for="User.Address" class="form-control" />
+            <span asp-validation-for="User.Address" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="User.Name" class="control-label"></label>
+            <input asp-for="User.Name" class="form-control" />
+            <span asp-validation-for="User.Name" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="User.Email" class="control-label"></label>
+            <input asp-for="User.Email" class="form-control" />
+            <span asp-validation-for="User.Email" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="User.Password" class="control-label"></label>
+            <input asp-for="User.Password" class="form-control" />
+            <span asp-validation-for="User.Password" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="User.PhoneNumber" class="control-label"></label>
+            <input asp-for="User.PhoneNumber" class="form-control" />
+            <span asp-validation-for="User.PhoneNumber" class="text-danger"></span>
+        </div>
+        <input type="submit" value="Save" class="btn btn-primary" />
+        <a asp-page="ViewProfile" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>

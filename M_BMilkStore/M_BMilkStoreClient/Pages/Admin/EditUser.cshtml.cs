@@ -43,6 +43,8 @@ namespace M_BMilkStoreClient.Pages.Admin
             {
                 return NotFound();
             }
+            existingUser.LastName= User.LastName;
+            existingUser.FirstName= User.FirstName;
             existingUser.Name = User.Name;
             existingUser.Email = User.Email;
             
