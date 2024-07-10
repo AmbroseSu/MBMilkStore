@@ -1,19 +1,16 @@
-﻿using BussinessObject;
+﻿using System.IO;
+using BussinessObject;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using System.IO;
 
 namespace DataAccessLayer
 {
     public class M_BMilkStoreDBContext : DbContext
     {
-        public M_BMilkStoreDBContext()
-        {
-        }
+        public M_BMilkStoreDBContext() { }
 
-        public M_BMilkStoreDBContext(DbContextOptions<M_BMilkStoreDBContext> options) : base(options)
-        {
-        }
+        public M_BMilkStoreDBContext(DbContextOptions<M_BMilkStoreDBContext> options)
+            : base(options) { }
 
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<Order> Orders { get; set; }
@@ -37,9 +34,9 @@ namespace DataAccessLayer
         private string GetConnectionString()
         {
             IConfiguration config = new ConfigurationBuilder()
-             .SetBasePath(Directory.GetCurrentDirectory())
-             .AddJsonFile("appsettings.json", true, true)
-             .Build();
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", true, true)
+                .Build();
             var strConn = config.GetConnectionString("DB");
 
             return strConn;
@@ -51,7 +48,7 @@ namespace DataAccessLayer
             {
                 e.ToTable("UserRole");
                 e.HasKey(x => x.UserRoleId);
-                e.Property(x=>x.UserRoleId).ValueGeneratedNever();
+                e.Property(x => x.UserRoleId).ValueGeneratedNever();
                 e.Property(x => x.UserRoleName);
             });
 
@@ -75,10 +72,8 @@ namespace DataAccessLayer
                 e.ToTable("Voucher");
                 e.HasKey(x => x.VoucherId);
                 e.Property(x => x.VoucherName);
-                e.Property(x => x.VoucherValue)
-                    .HasColumnType("decimal(18, 2)");
-                e.Property(x => x.MinimumPrice)
-                    .HasColumnType("decimal(18, 2)");
+                e.Property(x => x.VoucherValue).HasColumnType("decimal(18, 2)");
+                e.Property(x => x.MinimumPrice).HasColumnType("decimal(18, 2)");
                 e.Property(x => x.CreationDate);
                 e.Property(x => x.ExpiryDate);
             });
@@ -91,6 +86,13 @@ namespace DataAccessLayer
                 e.Property(x => x.Status);
                 e.Property(x => x.OrderTotalAmount).IsRequired();
                 e.Property(x => x.isDeleted).IsRequired();
+                e.Property(x => x.RefundStatus)
+                    .HasConversion(
+                        v => v.ToString(),
+                        v => (RefundStatus)Enum.Parse(typeof(RefundStatus), v)
+                    )
+                    .HasMaxLength(20);
+                e.Property(x => x.RefundRequestDate);
                 e.HasOne(x => x.User)
                     .WithMany(x => x.ListOrder)
                     .HasForeignKey(x => x.UserId)
@@ -122,7 +124,8 @@ namespace DataAccessLayer
             {
                 e.ToTable("ProductLine");
                 e.HasKey(x => x.ProductLineId);
-                e.Property(x => x.Quantity);
+                e.Property(x => x.QuantityIn);
+                e.Property(x => x.QuantityOut);
                 e.Property(x => x.ExpiredDate);
                 e.HasOne(x => x.Product)
                     .WithMany(x => x.ListProductLine)

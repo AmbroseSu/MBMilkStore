@@ -13,7 +13,8 @@ namespace BussinessObject
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Key]
         public int ProductLineId { get; set; }
-        public int Quantity {  get; set; }
+        public int QuantityIn {  get; set; }
+        public int QuantityOut { get; set; }
         public bool? Status { get; set; }
         public bool? IsDeleted { get; set; }
 
