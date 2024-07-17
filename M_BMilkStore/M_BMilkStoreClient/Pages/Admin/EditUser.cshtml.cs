@@ -47,7 +47,7 @@ namespace M_BMilkStoreClient.Pages.Admin
             existingUser.FirstName= User.FirstName;
             existingUser.Name = User.Name;
             existingUser.Email = User.Email;
-            
+            existingUser.PhoneNumber = User.PhoneNumber;
             existingUser.RoleId = User.RoleId;
             existingUser.Status = User.Status;
             existingUser.IsDeleted = User.IsDeleted;

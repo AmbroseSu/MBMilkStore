@@ -20,7 +20,7 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.ProductLine[0].Quantity)
+                @Html.DisplayNameFor(model => model.ProductLine[0].QuantityIn)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.ProductLine[0].ExpiredDate)
@@ -35,7 +35,7 @@
 @foreach (var item in Model.ProductLine) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Quantity)
+                    @Html.DisplayFor(modelItem => item.QuantityIn)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.ExpiredDate)

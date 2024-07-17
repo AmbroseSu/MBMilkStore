@@ -84,7 +84,7 @@ namespace M_BMilkStoreClient.Pages.Products
             {
                 ProductLine.ProductId = id;
                 DateTime currentDate = DateTime.Now;
-                if (ProductLine.Quantity <= 0)
+                if (ProductLine.QuantityIn <= 0)
                 {
                     TempData["MessageError"] = "Quantity must be greater than 0";
                     return RedirectToPage(new { id });

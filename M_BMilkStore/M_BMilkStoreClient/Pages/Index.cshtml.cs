@@ -1,9 +1,11 @@
 ﻿using BussinessObject;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Service;
+using Microsoft.Extensions.Logging;
 using Service.Interfaces;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace M_BMilkStoreClient.Pages
 {
@@ -11,59 +13,46 @@ namespace M_BMilkStoreClient.Pages
     {
         private readonly ILogger<IndexModel> _logger;
         private readonly IProductService _productService;
-        private readonly IProductLineService iProductLineService;
-        public IndexModel(ILogger<IndexModel> logger, IProductService productService)
+        private readonly IProductLineService _productLineService;
+
+        public IndexModel(ILogger<IndexModel> logger, IProductService productService, IProductLineService productLineService)
         {
             _logger = logger;
             _productService = productService;
-            iProductLineService = new ProductLineService();
+            _productLineService = productLineService;
         }
 
         public IList<Product> Product { get; set; } = new List<Product>();
+        public int PageSize { get; set; } = 5;
+        public int PageIndex { get; set; } = 1;
+        public int TotalItems { get; set; }
+        public int TotalPages { get; set; }
 
-        public async Task OnGetAsync(string searchString)
+        [BindProperty(SupportsGet = true)]
+        public string SearchString { get; set; }
+
+        public async Task<IActionResult> OnGetAsync(int? pageIndex)
         {
-            IList<Product> allProducts;
-            if (!string.IsNullOrEmpty(searchString))
-            {
-                allProducts = await _productService.GetProductByName(searchString);
-            }
-            else
-            {
-                allProducts = await _productService.GetAllProduct();
-            }
-            Product = new List<Product>();
+            PageIndex = pageIndex ?? 1;
 
-            foreach (var product in allProducts)
+            var pagedResult = await _productService.GetProductsPagedAsync(PageIndex, PageSize, SearchString);
+            Product = pagedResult.Items;
+
+            foreach (var product in Product)
             {
-                var productLines = await iProductLineService.GetProductLinesByProductId(product.ProductId);
+                var productLines = await _productLineService.GetProductLinesByProductId(product.ProductId);
                 if (productLines != null && productLines.Any())
                 {
-                    int totalQuantity = productLines.Where(pl => pl.Status == true && pl.IsDeleted == false).Sum(pl => pl.Quantity);
-
-                    Product.Add(new Product
-                    {
-                        ProductId = product.ProductId,
-                        Name = product.Name,
-                        Description = product.Description,
-                        Price = product.Price,
-                        Image = product.Image,
-                        ProductBrandId = product.ProductBrandId,
-                        ProductCategoryId = product.ProductCategoryId,
-                        ProductBrand = product.ProductBrand,
-                        ProductCategory = product.ProductCategory,
-                        ListProductLine = product.ListProductLine, // Giữ nguyên danh sách product line nếu cần
-                        ListOrderDetail = product.ListOrderDetail, // Giữ nguyên danh sách order detail nếu cần
-                        Status = product.Status,
-                        IsDeleted = product.IsDeleted,
-
-                        // Tạo một thuộc tính tạm thời để lưu total quantity tính được
-                        TotalQuantity = totalQuantity
-                    });
+                    product.TotalQuantity = productLines
+                        .Where(pl => pl.Status == true && pl.IsDeleted == false)
+                        .Sum(pl => pl.Quantity);
                 }
             }
 
+            TotalItems = pagedResult.TotalItems;
+            TotalPages = pagedResult.TotalPages;
 
+            return Page();
         }
     }
 }

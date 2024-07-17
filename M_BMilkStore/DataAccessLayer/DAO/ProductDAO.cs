@@ -177,5 +177,38 @@ namespace DataAccessLayer.DAO
                 throw new Exception(ex.Message);
             }
         }
+        public async Task<PageResult<Product>> GetProductsPagedAsync(int pageIndex, int pageSize, string searchString)
+        {
+            using var context = new M_BMilkStoreDBContext();
+            var query = context.Products.Include(x=>x.ProductBrand).Include(x=>x.ProductCategory).AsQueryable();
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                query = query.Where(u =>
+                                    u.Name.Contains(searchString) ||
+                                    u.Description.Contains(searchString) ||
+                                    u.ProductBrand.Name.Contains(searchString) ||
+                                    u.ProductCategory.Name.Contains(searchString)
+                                    
+                                    
+                                    );
+
+            }
+
+            var totalItems = await query.CountAsync();
+
+            var products = await query
+                .Skip((pageIndex - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return new PageResult<Product>
+            {
+                Items = products,
+                PageIndex = pageIndex,
+                PageSize = pageSize,
+                TotalItems = totalItems
+            };
+        }
     }
 }
