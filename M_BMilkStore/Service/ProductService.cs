@@ -57,5 +57,10 @@ namespace Service
         {
             await iProductRepository.UpdateProduct(product);
         }
+
+        public async Task<PageResult<Product>> GetProductsPagedAsync(int pageIndex, int pageSize, string searchString)
+        {
+            return await iProductRepository.GetProductsPagedAsync(pageIndex, pageSize, searchString);
+        }
     }
 }

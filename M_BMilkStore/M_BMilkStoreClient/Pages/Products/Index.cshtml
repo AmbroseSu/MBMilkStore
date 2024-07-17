@@ -74,3 +74,36 @@
         }
     </tbody>
 </table>
+@if (Model.TotalPages > 1)
+{
+    <nav>
+        <ul class="pagination">
+            @if (Model.PageIndex > 1)
+            {
+                <li class="page-item">
+                    <a class="page-link" asp-page="/Products/Index" asp-route-pageIndex="1">First</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" asp-page="/Products/Index" asp-route-pageIndex="@(Model.PageIndex - 1)">Previous</a>
+                </li>
+            }
+
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item @(i == Model.PageIndex ? "active" : "")">
+                    <a class="page-link" asp-page="/Products/Index" asp-route-pageIndex="@i">@i</a>
+                </li>
+            }
+
+            @if (Model.PageIndex < Model.TotalPages)
+            {
+                <li class="page-item">
+                    <a class="page-link" asp-page="/Products/Index" asp-route-pageIndex="@(Model.PageIndex + 1)">Next</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" asp-page="/Products/Index" asp-route-pageIndex="@Model.TotalPages">Last</a>
+                </li>
+            }
+        </ul>
+    </nav>
+}

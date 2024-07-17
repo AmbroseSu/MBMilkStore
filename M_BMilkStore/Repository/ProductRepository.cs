@@ -24,5 +24,8 @@ namespace Repository
         public async Task<List<Product>> GetProductByName(string name) => await ProductDAO.Instance.GetProductByName(name);
 
         public async Task UpdateProduct(Product product) => await ProductDAO.Instance.UpdateProduct(product);
+
+        public async Task<PageResult<Product>> GetProductsPagedAsync(int pageIndex, int pageSize, string searchString)=> await ProductDAO.Instance.GetProductsPagedAsync(pageIndex, pageSize, searchString);
+        
     }
 }

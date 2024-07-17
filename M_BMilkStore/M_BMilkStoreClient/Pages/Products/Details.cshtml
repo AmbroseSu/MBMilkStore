@@ -74,9 +74,9 @@
                         <form method="post">
                             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                             <div class="form-group">
-                                <label asp-for="ProductLine.Quantity" class="control-label"></label>
-                                <input asp-for="ProductLine.Quantity" class="form-control" />
-                                <span asp-validation-for="ProductLine.Quantity" class="text-danger"></span>
+                                <label asp-for="ProductLine.QuantityIn" class="control-label"></label>
+                                <input asp-for="ProductLine.QuantityIn" class="form-control" />
+                                <span asp-validation-for="ProductLine.QuantityIn" class="text-danger"></span>
                             </div>
                             <div class="form-group">
                                 <label asp-for="ProductLine.ExpiredDate" class="control-label"></label>
@@ -108,7 +108,7 @@
                     <thead>
                         <tr>
                             <th>
-                                @Html.DisplayNameFor(model => model.ProductLines[0].Quantity)
+                                @Html.DisplayNameFor(model => model.ProductLines[0].QuantityIn)
                             </th>
                             <th>
                                 @Html.DisplayNameFor(model => model.ProductLines[0].ExpiredDate)
@@ -124,7 +124,7 @@
                         {
                             <tr>
                                 <td>
-                                    @Html.DisplayFor(modelItem => item.Quantity)
+                                    @Html.DisplayFor(modelItem => item.QuantityIn)
                                 </td>
                                 <td>
                                     @Html.DisplayFor(modelItem => item.ExpiredDate)

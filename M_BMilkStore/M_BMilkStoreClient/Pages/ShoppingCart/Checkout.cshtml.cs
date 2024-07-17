@@ -298,13 +298,13 @@ namespace M_BMilkStoreClient.Pages.ShoppingCart
                     if (remainingQuantity <= 0)
                         break; 
 
-                    int availableQuantity = productLine.Quantity; 
+                    int availableQuantity = productLine.QuantityIn; 
 
                     if (availableQuantity >= remainingQuantity)
                     {
-                        productLine.Quantity -= remainingQuantity;
+                        productLine.QuantityIn -= remainingQuantity;
 
-                        if (productLine.Quantity == 0)
+                        if (productLine.QuantityIn == 0)
                         {
                             productLine.Status = false; 
                             productLine.IsDeleted = true; 
@@ -316,7 +316,7 @@ namespace M_BMilkStoreClient.Pages.ShoppingCart
                     else
                     {
                        
-                        productLine.Quantity = 0; 
+                        productLine.QuantityIn = 0; 
 
                         productLine.Status = false;
                         productLine.IsDeleted = true;

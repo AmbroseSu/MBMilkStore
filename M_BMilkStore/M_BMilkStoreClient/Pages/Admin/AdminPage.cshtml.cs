@@ -34,7 +34,12 @@ namespace M_BMilkStoreClient.Pages.Admin
             if (UserRole != "Admin")
             {
                 return RedirectToPage("/Error");
+            } 
+            if (UserRole == null)
+            {
+                return RedirectToPage("/Authenticate");
             }
+
 
             PageIndex = pageIndex ?? 1;
 

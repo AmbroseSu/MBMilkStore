@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using BussinessObject;
 using DataAccessLayer;
 using Service.Interfaces;
+using Service;
 
 namespace M_BMilkStoreClient.Pages.Products
 {
@@ -21,17 +22,25 @@ namespace M_BMilkStoreClient.Pages.Products
         }
 
         public IList<Product> Product { get; set; } = default!;
+        public int PageSize { get; set; } = 5;
+        public int PageIndex { get; set; } = 1;
+        public int TotalItems { get; set; }
+        public int TotalPages { get; set; }
 
-        public async Task OnGetAsync(string searchString)
+        [BindProperty(SupportsGet = true)]
+        public string SearchString { get; set; }
+
+        public async Task<IActionResult> OnGetAsync(int? pageIndex)
         {
-            if (!string.IsNullOrEmpty(searchString))
-            {
-                Product = await _productService.GetProductByName(searchString);
-            }
-            else
-            {
-                Product = await _productService.GetAllProduct();
-            }
+            PageIndex = pageIndex ?? 1;
+
+            var pagedResult = await _productService.GetProductsPagedAsync(PageIndex, PageSize, SearchString);
+
+            Product = pagedResult.Items;
+            TotalItems = pagedResult.TotalItems;
+            TotalPages = pagedResult.TotalPages;
+
+            return Page();
         }
 
     }

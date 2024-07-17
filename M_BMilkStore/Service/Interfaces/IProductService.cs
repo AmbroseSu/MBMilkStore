@@ -18,6 +18,7 @@ namespace Service.Interfaces
         Task AddProduct(Product p);
         Task UpdateProduct(Product p);
         Task DeleteProduct(int id);
-        
+        Task<PageResult<Product>> GetProductsPagedAsync(int pageIndex, int pageSize, string searchString);
+
     }
 }

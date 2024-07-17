@@ -127,9 +127,7 @@ namespace DataAccessLayer.DAO
                 query = query.Where(u =>
                                     u.Name.Contains(searchString) ||
                                     u.Email.Contains(searchString) ||
-                                    u.Password.Contains(searchString) ||
-                                    u.Status.ToString().Contains(searchString) ||
-                                    u.IsDeleted.ToString().Contains(searchString) ||
+                                    
                                     u.UserRole.UserRoleName.Contains(searchString) ||
                                     u.Address.Contains(searchString) ||
                                     u.LastName.Contains(searchString) ||

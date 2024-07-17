@@ -18,6 +18,7 @@ namespace Repository.Interfaces
         Task AddProduct(Product product);
         Task DeleteProduct(int id);
         Task UpdateProduct(Product product);
+        Task<PageResult<Product>> GetProductsPagedAsync(int pageIndex, int pageSize, string searchString);
 
     }
 }
