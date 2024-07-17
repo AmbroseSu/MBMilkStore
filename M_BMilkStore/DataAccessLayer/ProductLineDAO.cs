@@ -1,10 +1,10 @@
-﻿using BussinessObject;
-using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BussinessObject;
+using Microsoft.EntityFrameworkCore;
 
 namespace DataAccessLayer
 {
@@ -28,18 +28,13 @@ namespace DataAccessLayer
             }
         }
 
-
         public async Task<List<ProductLine>> GetProductLines()
         {
             var listProductLines = new List<ProductLine>();
             try
             {
-
                 using var context = new M_BMilkStoreDBContext();
-                listProductLines = context.ProductLines
-                    .Include(pl => pl.Product)
-                    .ToList();
-
+                listProductLines = context.ProductLines.Include(pl => pl.Product).ToList();
             }
             catch (Exception ex)
             {
@@ -57,8 +52,6 @@ namespace DataAccessLayer
                 productLine.Status = true;
                 productLine.IsDeleted = false;
                 context.SaveChanges();
-
-
             }
             catch (Exception ex)
             {
@@ -71,8 +64,10 @@ namespace DataAccessLayer
             try
             {
                 using var context = new M_BMilkStoreDBContext();
-                context.Entry<ProductLine>(productLine).State
-                    = Microsoft.EntityFrameworkCore.EntityState.Modified;
+                context.Entry<ProductLine>(productLine).State = Microsoft
+                    .EntityFrameworkCore
+                    .EntityState
+                    .Modified;
                 context.SaveChanges();
             }
             catch (Exception ex)
@@ -86,7 +81,9 @@ namespace DataAccessLayer
             try
             {
                 using var context = new M_BMilkStoreDBContext();
-                var proli = context.ProductLines.SingleOrDefault(proline => proline.ProductLineId == productLine.ProductLineId);
+                var proli = context.ProductLines.SingleOrDefault(proline =>
+                    proline.ProductLineId == productLine.ProductLineId
+                );
                 if (proli == null)
                 {
                     throw new Exception("Product Line not exist.");
@@ -96,8 +93,6 @@ namespace DataAccessLayer
                     context.ProductLines.Remove(proli);
                     context.SaveChanges();
                 }
-
-
             }
             catch (Exception ex)
             {
@@ -110,13 +105,14 @@ namespace DataAccessLayer
             try
             {
                 using var context = new M_BMilkStoreDBContext();
-                return context.ProductLines.FirstOrDefault(prli => prli.ProductLineId.Equals(productlineId));
+                return context.ProductLines.FirstOrDefault(prli =>
+                    prli.ProductLineId.Equals(productlineId)
+                );
             }
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
-
         }
 
         public async Task<List<ProductLine>> GetProductLinesByProductId(int productId)
@@ -125,17 +121,46 @@ namespace DataAccessLayer
             try
             {
                 using var context = new M_BMilkStoreDBContext();
-                return context.ProductLines.Where(proli => proli.ProductId.Equals(productId) && proli.ExpiredDate >= DateTime.Now.AddDays(20) && proli.Status == true && proli.IsDeleted == false)
-                    .OrderBy(proli => proli.ExpiredDate).Include(pl => pl.Product).ToList();
+                return context
+                    .ProductLines.Where(proli =>
+                        proli.ProductId.Equals(productId)
+                        && proli.ExpiredDate >= DateTime.Now.AddDays(20)
+                        && proli.Status == true
+                        && proli.IsDeleted == false
+                    )
+                    .OrderBy(proli => proli.ExpiredDate)
+                    .Include(pl => pl.Product)
+                    .ToList();
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
         }
 
+        public async Task<int> GetRemainingQuantityByProductId(int productId)
+        {
+            try
+            {
+                using var context = new M_BMilkStoreDBContext();
+                var productLines = await context
+                    .ProductLines.Where(pl =>
+                        pl.ProductId == productId
+                        && pl.ExpiredDate >= DateTime.Now
+                        && pl.Status == true
+                        && pl.IsDeleted == false
+                    )
+                    .ToListAsync();
 
+                int totalQuantityIn = productLines.Sum(pl => pl.QuantityIn);
+                int totalQuantityOut = productLines.Sum(pl => pl.QuantityOut);
 
-
+                return totalQuantityIn - totalQuantityOut;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
     }
 }

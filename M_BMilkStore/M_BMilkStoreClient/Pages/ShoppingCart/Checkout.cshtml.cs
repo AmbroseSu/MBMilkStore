@@ -1,21 +1,25 @@
-﻿using BussinessObject;
-using M_BMilkStoreClient.Service;
+﻿using System.ComponentModel.DataAnnotations;
+using BussinessObject;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using M_BMilkStoreClient.Service;
 using Service;
 using Service.Interfaces;
-using System.ComponentModel.DataAnnotations;
 
 namespace M_BMilkStoreClient.Pages.ShoppingCart
 {
     public class CheckoutModel : PageModel
     {
-
         private readonly IUserService _userService;
         private readonly IOrderService _orderService;
         private readonly IProductLineService iProductLineService;
         private readonly IVoucherService _voucherService;
-        public CheckoutModel(IUserService userService, IOrderService orderService, IVoucherService voucherService)
+
+        public CheckoutModel(
+            IUserService userService,
+            IOrderService orderService,
+            IVoucherService voucherService
+        )
         {
             _userService = userService;
             _orderService = orderService;
@@ -25,11 +29,14 @@ namespace M_BMilkStoreClient.Pages.ShoppingCart
 
         [TempData]
         public string ToastMessage { get; set; }
+
         [TempData]
         public string ToastType { get; set; } // "success" or "error"
         public string? TotalPrice { get; private set; }
+
         [BindProperty]
         public string? DeliveryOptionName { get; set; }
+
         [BindProperty]
         public float DeliveryOptionValue { get; set; }
 
@@ -38,8 +45,12 @@ namespace M_BMilkStoreClient.Pages.ShoppingCart
             get
             {
                 var totalPrice = float.Parse(HttpContext.Session.GetString("TotalPrice") ?? "0.00");
-                var deliveryValue = float.Parse(HttpContext.Session.GetString("DeliveryOptionValue") ?? "5.00");
-                var voucherValue = float.Parse(HttpContext.Session.GetString("VoucherValue") ?? "0.00");
+                var deliveryValue = float.Parse(
+                    HttpContext.Session.GetString("DeliveryOptionValue") ?? "5.00"
+                );
+                var voucherValue = float.Parse(
+                    HttpContext.Session.GetString("VoucherValue") ?? "0.00"
+                );
                 return totalPrice + deliveryValue - voucherValue;
             }
         }
@@ -74,11 +85,15 @@ namespace M_BMilkStoreClient.Pages.ShoppingCart
         public bool IsUpdateFailed { get; private set; }
         public bool IsVoucherApplied { get; private set; }
         public string? VoucherMessage { get; private set; }
+
         public async Task OnGetAsync()
         {
             TotalPrice = HttpContext.Session.GetString("TotalPrice") ?? "0.00";
-            DeliveryOptionName = HttpContext.Session.GetString("DeliveryOptionName") ?? "Standard Delivery";
-            DeliveryOptionValue = float.Parse(HttpContext.Session.GetString("DeliveryOptionValue") ?? "5.00");
+            DeliveryOptionName =
+                HttpContext.Session.GetString("DeliveryOptionName") ?? "Standard Delivery";
+            DeliveryOptionValue = float.Parse(
+                HttpContext.Session.GetString("DeliveryOptionValue") ?? "5.00"
+            );
             VoucherValue = float.Parse(HttpContext.Session.GetString("VoucherValue") ?? "0.00");
             VoucherCode = HttpContext.Session.GetString("VoucherName");
             int? userId = HttpContext.Session.GetInt32("UserId");
@@ -110,9 +125,13 @@ namespace M_BMilkStoreClient.Pages.ShoppingCart
             }
 
             TotalPrice = HttpContext.Session.GetString("TotalPrice") ?? TotalPrice;
-            DeliveryOptionValue = float.Parse(HttpContext.Session.GetString("DeliveryOptionValue") ?? "5.00");
+            DeliveryOptionValue = float.Parse(
+                HttpContext.Session.GetString("DeliveryOptionValue") ?? "5.00"
+            );
             VoucherValue = float.Parse(HttpContext.Session.GetString("VoucherValue") ?? "0.00");
-            float finalPrice = (float.Parse(TotalPrice ?? "0.00") + DeliveryOptionValue - VoucherValue);
+            float finalPrice = (
+                float.Parse(TotalPrice ?? "0.00") + DeliveryOptionValue - VoucherValue
+            );
             int? userId = HttpContext.Session.GetInt32("UserId");
             if (userId.HasValue)
             {
@@ -130,42 +149,65 @@ namespace M_BMilkStoreClient.Pages.ShoppingCart
                         await _userService.UpdateUserAsync(user);
 
                         // Create the order
-                        var cartItems = SessionService.GetSessionObjectAsJson<List<CartItem>>(HttpContext.Session, "cart");
+                        var cartItems = SessionService.GetSessionObjectAsJson<List<CartItem>>(
+                            HttpContext.Session,
+                            "cart"
+                        );
                         if (cartItems != null && cartItems.Count > 0)
                         {
                             // Kiểm tra và trừ số lượng sản phẩm trong cart trước khi tạo order
-                            bool isQuantityDeducted = await CheckAndDeductProductQuantity(cartItems);
+                            bool isQuantityDeducted = await CheckAndDeductProductQuantity(
+                                cartItems
+                            );
 
                             if (isQuantityDeducted)
                             {
                                 // Tạo danh sách chi tiết đơn hàng
-                                var orderDetails = cartItems.Select(ci => new OrderDetail
-                                {
-                                    ProductId = ci.Product.ProductId,
-                                    ProductQuantity = ci.Quantity,
-                                    ProductPrice = ci.Product.Price
-                                }).ToList();
+                                var orderDetails = cartItems
+                                    .Select(ci => new OrderDetail
+                                    {
+                                        ProductId = ci.Product.ProductId,
+                                        ProductQuantity = ci.Quantity,
+                                        ProductPrice = ci.Product.Price
+                                    })
+                                    .ToList();
 
                                 // Tạo đơn hàng và chi tiết đơn hàng
                                 if (float.TryParse(TotalPrice, out float parsedTotalPrice))
                                 {
                                     int? voucherId = null;
 
-                                    string voucherIdStr = HttpContext.Session.GetString("VoucherID");
-                                    if (!string.IsNullOrEmpty(voucherIdStr) && int.TryParse(voucherIdStr, out int parsedVoucherId))
+                                    string voucherIdStr = HttpContext.Session.GetString(
+                                        "VoucherID"
+                                    );
+                                    if (
+                                        !string.IsNullOrEmpty(voucherIdStr)
+                                        && int.TryParse(voucherIdStr, out int parsedVoucherId)
+                                    )
                                     {
                                         voucherId = parsedVoucherId;
                                     }
 
-                                    int orderId = await _orderService.CreateOrderAsync(userId.Value, finalPrice, voucherId);
-                                    bool isOrderDetailsCreated = await _orderService.CreateOrderDetailsAsync(orderId, orderDetails);
+                                    int orderId = await _orderService.CreateOrderAsync(
+                                        userId.Value,
+                                        finalPrice,
+                                        voucherId
+                                    );
+                                    bool isOrderDetailsCreated =
+                                        await _orderService.CreateOrderDetailsAsync(
+                                            orderId,
+                                            orderDetails
+                                        );
                                     IsUpdateSuccessful = isOrderDetailsCreated;
                                     ToastMessage = "Order created successfully!";
                                     ToastType = "success";
                                     // Call ClaimVoucherAsync if voucher is used
                                     if (voucherId.HasValue)
                                     {
-                                        await _voucherService.ClaimVoucherAsync(userId.Value, voucherId.Value);
+                                        await _voucherService.ClaimVoucherAsync(
+                                            userId.Value,
+                                            voucherId.Value
+                                        );
                                     }
                                 }
                                 else
@@ -174,7 +216,6 @@ namespace M_BMilkStoreClient.Pages.ShoppingCart
                                     ToastMessage = "Failed to create order!";
                                     ToastType = "error";
                                 }
-
                             }
                             else
                             {
@@ -256,9 +297,19 @@ namespace M_BMilkStoreClient.Pages.ShoppingCart
 
             return RedirectToPage();
         }
-        private async Task<(bool IsValid, int VoucherId, decimal VoucherValue, string VoucherName, string ErrorMessage)> ApplyVoucherAsync(string voucherCode, decimal currentFinalPrice, int userId)
+
+        private async Task<(
+            bool IsValid,
+            int VoucherId,
+            decimal VoucherValue,
+            string VoucherName,
+            string ErrorMessage
+        )> ApplyVoucherAsync(string voucherCode, decimal currentFinalPrice, int userId)
         {
-            var isValidVoucher = await _voucherService.IsValidVoucherAsync(voucherCode, currentFinalPrice);
+            var isValidVoucher = await _voucherService.IsValidVoucherAsync(
+                voucherCode,
+                currentFinalPrice
+            );
             if (!isValidVoucher)
             {
                 return (false, 0, 0, "None", "Invalid or expired voucher code.");
@@ -271,13 +322,22 @@ namespace M_BMilkStoreClient.Pages.ShoppingCart
             }
 
             // Check if the user has already claimed the voucher
-            bool hasClaimed = await _voucherService.HasUserAlreadyClaimedVoucherAsync(userId, voucher.VoucherId);
+            bool hasClaimed = await _voucherService.HasUserAlreadyClaimedVoucherAsync(
+                userId,
+                voucher.VoucherId
+            );
             if (hasClaimed)
             {
                 return (false, 0, 0, "None", "You have already claimed this voucher.");
             }
 
-            return (true, voucher.VoucherId, voucher.VoucherValue, voucher.VoucherName, string.Empty);
+            return (
+                true,
+                voucher.VoucherId,
+                voucher.VoucherValue,
+                voucher.VoucherName,
+                string.Empty
+            );
         }
 
         private async Task<bool> CheckAndDeductProductQuantity(List<CartItem> cartItems)
@@ -287,18 +347,19 @@ namespace M_BMilkStoreClient.Pages.ShoppingCart
                 var productId = cartItem.Product.ProductId;
                 var requestedQuantity = cartItem.Quantity;
 
-                var validProductLines = await iProductLineService.GetProductLinesByProductId(productId);
-                       
+                var validProductLines = await iProductLineService.GetProductLinesByProductId(
+                    productId
+                );
 
-                int remainingQuantity = requestedQuantity; 
-                bool allProductsDeducted = true; 
+                int remainingQuantity = requestedQuantity;
+                bool allProductsDeducted = true;
 
                 foreach (var productLine in validProductLines)
                 {
                     if (remainingQuantity <= 0)
-                        break; 
+                        break;
 
-                    int availableQuantity = productLine.QuantityIn; 
+                    int availableQuantity = productLine.QuantityIn;
 
                     if (availableQuantity >= remainingQuantity)
                     {
@@ -306,29 +367,28 @@ namespace M_BMilkStoreClient.Pages.ShoppingCart
 
                         if (productLine.QuantityIn == 0)
                         {
-                            productLine.Status = false; 
-                            productLine.IsDeleted = true; 
+                            productLine.Status = false;
+                            productLine.IsDeleted = true;
                         }
 
                         await iProductLineService.UpdateProductLine(productLine);
-                        remainingQuantity = 0; 
+                        remainingQuantity = 0;
                     }
                     else
                     {
-                       
-                        productLine.QuantityIn = 0; 
+                        productLine.QuantityIn = 0;
 
                         productLine.Status = false;
                         productLine.IsDeleted = true;
 
                         await iProductLineService.UpdateProductLine(productLine);
-                        remainingQuantity -= availableQuantity; 
+                        remainingQuantity -= availableQuantity;
 
-                        allProductsDeducted = false; 
+                        allProductsDeducted = false;
                     }
                 }
 
-                if(remainingQuantity == 0)
+                if (remainingQuantity == 0)
                 {
                     return true;
                 }
@@ -338,12 +398,10 @@ namespace M_BMilkStoreClient.Pages.ShoppingCart
                     {
                         return false;
                     }
-                        
                 }
-                 
             }
 
-            return true; 
+            return true;
         }
     }
 }

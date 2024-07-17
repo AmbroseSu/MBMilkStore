@@ -1,9 +1,9 @@
-﻿using BussinessObject;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BussinessObject;
 
 namespace Repository.Interfaces
 {
@@ -20,5 +20,6 @@ namespace Repository.Interfaces
         Task<ProductLine> GetProductLineById(int productLineId);
 
         Task<List<ProductLine>> GetProductLinesByProductId(int productId);
+        Task<int> GetRemainingQuantityByProductId(int productId);
     }
 }
