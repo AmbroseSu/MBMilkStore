@@ -15,19 +15,27 @@ namespace M_BMilkStoreClient.Pages.ManagementOrder
     public class DetailsModel : PageModel
     {
         private readonly IOrderService _orderService;
-        public bool IsStaff => HttpContext.Session.GetString("UserRole") == "Staff";
+        
         public DetailsModel(IOrderService orderService)
         {
             _orderService = orderService;
         }
 
         public Order Order { get; set; } = default!;
-
+        public string UserRole { get; private set; }
         public async Task<IActionResult> OnGetAsync(int id)
         {
-            if (IsStaff)
+            UserRole = HttpContext.Session.GetString("UserRole");
+            if (UserRole != "Staff")
             {
-                if (id == 0)
+                return RedirectToPage("/Error");
+            }
+            if (UserRole == null)
+            {
+                return RedirectToPage("/Authenticate");
+            }
+
+            if (id == 0)
                 {
                     return NotFound();
                 }
@@ -37,11 +45,7 @@ namespace M_BMilkStoreClient.Pages.ManagementOrder
                     return NotFound();
                 }
                 return Page();
-            }
-            else
-            {
-                return Redirect("/Authenticate");
-            }
+            
         }
     }
 }

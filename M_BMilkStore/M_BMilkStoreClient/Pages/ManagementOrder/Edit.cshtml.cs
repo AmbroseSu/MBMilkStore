@@ -19,9 +19,18 @@ namespace M_BMilkStoreClient.Pages.ManagementOrder
 
         [BindProperty]
         public Order Order { get; set; } = default!;
-
+        public string UserRole { get; private set; }
         public async Task<IActionResult> OnGetAsync(int id)
         {
+            UserRole = HttpContext.Session.GetString("UserRole");
+            if (UserRole != "Staff")
+            {
+                return RedirectToPage("/Error");
+            }
+            if (UserRole == null)
+            {
+                return RedirectToPage("/Authenticate");
+            }
             if (id == 0)
             {
                 return NotFound();

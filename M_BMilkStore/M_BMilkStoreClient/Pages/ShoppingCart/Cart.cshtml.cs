@@ -30,10 +30,20 @@ namespace M_BMilkStoreClient.Pages
 
         [BindProperty]
         public float DeliveryOptionValue { get; set; }
-
-        public void OnGet()
+        public string UserRole { get; private set; }
+        public async Task<IActionResult> OnGetAsync()
         {
+            UserRole = HttpContext.Session.GetString("UserRole");
+            if (UserRole != "Customer")
+            {
+                return RedirectToPage("/Error");
+            }
+            if (UserRole == null)
+            {
+                return RedirectToPage("/Authenticate");
+            }
             LoadCartFromSession();
+            return Page();
         }
 
         public async Task<IActionResult> OnPostAddToCartAsync(int productId)

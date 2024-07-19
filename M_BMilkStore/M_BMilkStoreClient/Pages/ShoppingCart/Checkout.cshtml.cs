@@ -85,9 +85,18 @@ namespace M_BMilkStoreClient.Pages.ShoppingCart
         public bool IsUpdateFailed { get; private set; }
         public bool IsVoucherApplied { get; private set; }
         public string? VoucherMessage { get; private set; }
-
-        public async Task OnGetAsync()
+        public string UserRole { get; private set; }
+        public async Task<IActionResult> OnGetAsync()
         {
+            UserRole = HttpContext.Session.GetString("UserRole");
+            if (UserRole != "Staff")
+            {
+                return RedirectToPage("/Error");
+            }
+            if (UserRole == null)
+            {
+                return RedirectToPage("/Authenticate");
+            }
             TotalPrice = HttpContext.Session.GetString("TotalPrice") ?? "0.00";
             DeliveryOptionName =
                 HttpContext.Session.GetString("DeliveryOptionName") ?? "Standard Delivery";
@@ -115,6 +124,7 @@ namespace M_BMilkStoreClient.Pages.ShoppingCart
             {
                 IsVoucherApplied = (bool)TempData["IsVoucherApplied"];
             }
+            return Page();
         }
 
         public async Task<IActionResult> OnPostAsync()
