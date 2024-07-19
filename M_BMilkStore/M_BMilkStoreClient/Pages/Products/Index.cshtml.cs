@@ -15,10 +15,12 @@ namespace M_BMilkStoreClient.Pages.Products
     public class IndexModel : PageModel
     {
         private readonly IProductService _productService;
+        private readonly IProductLineService _productLineService;
 
-        public IndexModel(IProductService productService)
+        public IndexModel(IProductService productService, IProductLineService productLineService)
         {
             _productService = productService;
+            _productLineService = productLineService;
         }
 
         public IList<Product> Product { get; set; } = default!;
@@ -37,6 +39,16 @@ namespace M_BMilkStoreClient.Pages.Products
             var pagedResult = await _productService.GetProductsPagedAsync(PageIndex, PageSize, SearchString);
 
             Product = pagedResult.Items;
+            foreach (var product in Product)
+            {
+                var productLines = await _productLineService.GetProductLinesByProductId(product.ProductId);
+                if (productLines != null && productLines.Any())
+                {
+                    product.TotalQuantity = productLines
+                        .Where(pl => pl.Status == true && pl.IsDeleted == false)
+                        .Sum(pl => pl.QuantityOut);
+                }
+            }
             TotalItems = pagedResult.TotalItems;
             TotalPages = pagedResult.TotalPages;
 

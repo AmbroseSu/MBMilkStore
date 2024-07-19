@@ -98,6 +98,7 @@ namespace M_BMilkStoreClient.Pages.Products
                     }
                     else
                     {
+                        ProductLine.QuantityOut = ProductLine.QuantityIn;
                         var productLine = iProductLineService.SaveProductLine(ProductLine);
                         return RedirectToPage(new { id });
                     }

@@ -340,6 +340,70 @@ namespace M_BMilkStoreClient.Pages.ShoppingCart
             );
         }
 
+        /*        private async Task<bool> CheckAndDeductProductQuantity(List<CartItem> cartItems)
+                {
+                    foreach (var cartItem in cartItems)
+                    {
+                        var productId = cartItem.Product.ProductId;
+                        var requestedQuantity = cartItem.Quantity;
+
+                        var validProductLines = await iProductLineService.GetProductLinesByProductId(
+                            productId
+                        );
+
+                        int remainingQuantity = requestedQuantity;
+                        bool allProductsDeducted = true;
+
+                        foreach (var productLine in validProductLines)
+                        {
+                            if (remainingQuantity <= 0)
+                                break;
+
+                            int availableQuantity = productLine.QuantityOut;
+
+                            if (availableQuantity >= remainingQuantity)
+                            {
+                                productLine.QuantityOut -= remainingQuantity;
+
+                                if (productLine.QuantityOut == 0)
+                                {
+                                    productLine.Status = false;
+                                    productLine.IsDeleted = true;
+                                }
+
+                                await iProductLineService.UpdateProductLine(productLine);
+                                remainingQuantity = 0;
+                            }
+                            else
+                            {
+                                productLine.QuantityOut = 0;
+
+                                productLine.Status = false;
+                                productLine.IsDeleted = true;
+
+                                await iProductLineService.UpdateProductLine(productLine);
+                                remainingQuantity -= availableQuantity;
+
+                                allProductsDeducted = false;
+                            }
+                        }
+
+                        if (remainingQuantity == 0)
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            if (remainingQuantity > 0 && !allProductsDeducted)
+                            {
+                                return false;
+                            }
+                        }
+                    }
+
+                    return true;
+                }*/
+
         private async Task<bool> CheckAndDeductProductQuantity(List<CartItem> cartItems)
         {
             foreach (var cartItem in cartItems)
@@ -347,25 +411,22 @@ namespace M_BMilkStoreClient.Pages.ShoppingCart
                 var productId = cartItem.Product.ProductId;
                 var requestedQuantity = cartItem.Quantity;
 
-                var validProductLines = await iProductLineService.GetProductLinesByProductId(
-                    productId
-                );
+                var validProductLines = await iProductLineService.GetProductLinesByProductId(productId);
 
                 int remainingQuantity = requestedQuantity;
-                bool allProductsDeducted = true;
 
                 foreach (var productLine in validProductLines)
                 {
                     if (remainingQuantity <= 0)
                         break;
 
-                    int availableQuantity = productLine.QuantityIn;
+                    int availableQuantity = productLine.QuantityOut;
 
                     if (availableQuantity >= remainingQuantity)
                     {
-                        productLine.QuantityIn -= remainingQuantity;
+                        productLine.QuantityOut -= remainingQuantity;
 
-                        if (productLine.QuantityIn == 0)
+                        if (productLine.QuantityOut == 0)
                         {
                             productLine.Status = false;
                             productLine.IsDeleted = true;
@@ -376,32 +437,26 @@ namespace M_BMilkStoreClient.Pages.ShoppingCart
                     }
                     else
                     {
-                        productLine.QuantityIn = 0;
-
+                        productLine.QuantityOut = 0;
                         productLine.Status = false;
                         productLine.IsDeleted = true;
-
                         await iProductLineService.UpdateProductLine(productLine);
                         remainingQuantity -= availableQuantity;
-
-                        allProductsDeducted = false;
                     }
                 }
 
-                if (remainingQuantity == 0)
+                if (remainingQuantity > 0)
                 {
-                    return true;
-                }
-                else
-                {
-                    if (remainingQuantity > 0 && !allProductsDeducted)
-                    {
-                        return false;
-                    }
+                    // Nếu không trừ đủ số lượng cho sản phẩm này, trả về false và không cần kiểm tra các sản phẩm khác
+                    return false;
                 }
             }
 
+            // Nếu tất cả sản phẩm đều trừ đủ số lượng, trả về true
             return true;
         }
+
+
     }
+
 }

@@ -45,7 +45,7 @@ namespace M_BMilkStoreClient.Pages
                 {
                     product.TotalQuantity = productLines
                         .Where(pl => pl.Status == true && pl.IsDeleted == false)
-                        .Sum(pl => pl.QuantityIn);
+                        .Sum(pl => pl.QuantityOut);
                 }
             }
 
