@@ -27,7 +27,7 @@ namespace M_BMilkStoreClient.Pages.ManagementVoucher
         public async Task<IActionResult> OnGetAsync(int id)
         {
             UserRole = HttpContext.Session.GetString("UserRole");
-            if (UserRole != "Admin")
+            if (UserRole != "Admin" && UserRole != null)
             {
                 return RedirectToPage("/Error");
             }

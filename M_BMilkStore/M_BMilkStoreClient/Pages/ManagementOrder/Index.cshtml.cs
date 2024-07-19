@@ -29,7 +29,7 @@ namespace M_BMilkStoreClient.Pages.ManagementOrder
         public async Task<IActionResult> OnGetAsync(int pageNumber = 1)
         {
             UserRole = HttpContext.Session.GetString("UserRole");
-            if (UserRole != "Staff")
+            if (UserRole != "Staff" && UserRole != null)
             {
                 return RedirectToPage("/Error");
             }
