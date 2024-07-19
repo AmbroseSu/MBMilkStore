@@ -1,0 +1,70 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+@model BussinessObject.Order
+
+@{
+    var groupedOrderDetails = Model.ListOrderDetail
+        .GroupBy(item => item.Product?.Name)
+        .Select(g => new
+        {
+            ProductName = g.Key,
+            Quantity = g.Count(),
+            TotalPrice = g.Sum(item => item.ProductPrice)
+        });
+}
+
+<div class="container py-5 h-100">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="col-lg-8 col-xl-10">
+            <div class="card border-top border-bottom border-3" style="border-color: #f37a27 !important;">
+                <div class="card-body p-5">
+
+                    <p class="lead fw-bold mb-5" style="color: #f37a27;">Purchase Receipt</p>
+
+                    <div class="row mb-3">
+                        <div class="col">
+                            <p class="small text-muted mb-1">Date</p>
+                            <p>@Model.OrderDate.ToShortDateString()</p>
+                        </div>
+                        <div class="col">
+                            <p class="small text-muted mb-1">Order No.</p>
+                            <p>@Model.OrderId</p>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Quantity</th>
+                                    <th>Price</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in groupedOrderDetails)
+                                {
+                                    <tr>
+                                        <td>@item.ProductName</td>
+                                        <td class="text-center">@item.Quantity</td>
+                                        <td class="text-end">€ @item.TotalPrice.ToString("0.00")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="2" class="text-end">Total</td>
+                                    <td class="text-start">€ @Model.OrderTotalAmount.ToString("0.00")</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

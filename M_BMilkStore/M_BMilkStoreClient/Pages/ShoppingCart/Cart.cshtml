@@ -10,7 +10,6 @@
     <title>@ViewData["Title"] - My ASP.NET Application</title>
     <link rel="stylesheet" href="~/css/ShoppingCart.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <style>
         .cart-items-container {
             max-height: 90vh;
@@ -66,16 +65,16 @@
                                                     <h6 class="mb-0">@cartItem.Product.Description</h6>
                                                 </div>
                                                 <div class="col-md-3 col-lg-3 col-xl-2 d-flex">
-                                                    <button class="btn btn-link px-2" onclick="updateQuantity(@cartItem.Product.ProductId, @cartItem.Quantity - 1, @cartItem.Product.Price)">
+                                                    <button class="btn btn-link px-2" onclick="updateQuantity(@cartItem.Product.ProductId, -1, @cartItem.Product.Price)">
                                                         <i class="fas fa-minus"></i>
                                                     </button>
-                                                    <input id="quantityInput-@cartItem.Product.ProductId" min="0" name="quantity" value="@cartItem.Quantity" type="number" class="form-control form-control-sm" oninput="updatePrice(@cartItem.Product.ProductId, @cartItem.Product.Price)">
-                                                    <button class="btn btn-link px-2" onclick="updateQuantity(@cartItem.Product.ProductId, @cartItem.Quantity + 1, @cartItem.Product.Price)">
+                                                    <input id="quantityInput-@cartItem.Product.ProductId" min="1" name="quantity" value="@cartItem.Quantity" type="number" class="form-control form-control-sm" oninput="updatePrice(@cartItem.Product.ProductId, @cartItem.Product.Price)">
+                                                    <button class="btn btn-link px-2" onclick="updateQuantity(@cartItem.Product.ProductId, 1, @cartItem.Product.Price)">
                                                         <i class="fas fa-plus"></i>
                                                     </button>
                                                 </div>
                                                 <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
-                                                    <h6 class="mb-0">€ <span id="totalPrice-@cartItem.Product.ProductId">@((cartItem.Product.Price * cartItem.Quantity).ToString("F2"))</span></h6>
+                                                    <h6 class="mb-0">€<span id="totalPrice-@cartItem.Product.ProductId">@((cartItem.Product.Price * cartItem.Quantity).ToString("F2"))</span></h6>
                                                 </div>
                                                 <div class="col-md-1 col-lg-1 col-xl-1 text-end">
                                                     <a class="btn btn-danger" asp-page-handler="Delete" asp-route-id="@cartItem.Product.ProductId">
@@ -116,15 +115,6 @@
                                             </select>
                                         </div>
 
-@*                                         <h5 class="text-uppercase mb-3">Give code</h5>
-
-                                        <div class="mb-5">
-                                            <div data-mdb-input-init class="form-outline">
-                                                <input type="text" id="form3Examplea2" class="form-control form-control-lg" />
-                                                <label class="form-label" for="form3Examplea2">Enter your code</label>
-                                            </div>
-                                        </div> *@
-
                                         <hr class="my-4">
 
                                         <div class="d-flex justify-content-between mb-5">
@@ -154,15 +144,28 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            function updateQuantity(productId, newQuantity, itemPrice) {
-                if (newQuantity < 0) newQuantity = 0;
-
+            async function updateQuantity(productId, change, itemPrice) {
                 const quantityInput = document.getElementById(`quantityInput-${productId}`);
-                quantityInput.value = newQuantity;
-                updatePrice(productId, itemPrice);
+                let newQuantity = parseInt(quantityInput.value) + change;
 
-                // Update quantity in session via URL
-                window.location.href = `?handler=UpdateQuantity&id=${productId}&quantity=${newQuantity}`;
+                if (newQuantity < 1) newQuantity = 1; // Ensure the minimum quantity is 1
+
+                const response = await fetch(`?handler=UpdateQuantity&id=${productId}&quantity=${newQuantity}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result.success) {
+                        quantityInput.value = newQuantity;
+                        updatePrice(productId, itemPrice);
+                    } else {
+                        alert(result.message);
+                    }
+                }
             }
 
             function updatePrice(productId, itemPrice) {
@@ -170,7 +173,7 @@
                 const totalPriceElement = document.getElementById(`totalPrice-${productId}`);
                 const newQuantity = parseInt(quantityInput.value);
                 const newTotalPrice = (itemPrice * newQuantity).toFixed(2);
-                totalPriceElement.textContent = `€ ${newTotalPrice}`;
+                totalPriceElement.textContent = ` ${newTotalPrice}`;
                 updateCartTotalPrice();
             }
 
@@ -178,42 +181,34 @@
                 let totalCartPrice = 0;
                 const priceElements = document.querySelectorAll('[id^="totalPrice-"]');
                 priceElements.forEach(element => {
-                    totalCartPrice += parseFloat(element.textContent.replace('€ ', ''));
+                    totalCartPrice += parseFloat(element.textContent);
                 });
 
-                let grandTotalPrice = totalCartPrice;
+                const deliveryOption = document.getElementById("deliveryOption");
+                const deliveryCharge = parseFloat(deliveryOption.value);
 
-                const deliverySelect = document.getElementById('deliveryOption');
-                const deliveryCost = parseFloat(deliverySelect.value);
-                grandTotalPrice += deliveryCost;
+                totalCartPrice += deliveryCharge;
 
-                document.getElementById('totalCartPrice').textContent = `€ ${totalCartPrice.toFixed(2)}`;
-                document.getElementById('grandTotalPrice').textContent = `€ ${grandTotalPrice.toFixed(2)}`;
-
-                // Update hidden delivery option
-                const deliveryOptionText = deliverySelect.options[deliverySelect.selectedIndex].text.split(' - ')[0];
-                document.getElementById('hiddenDeliveryOptionName').value = deliveryOptionText;
-                document.getElementById('hiddenDeliveryOptionValue').value = deliveryCost.toFixed(2);
+                document.getElementById("totalCartPrice").textContent = totalCartPrice.toFixed(2);
+                document.getElementById("grandTotalPrice").textContent = totalCartPrice.toFixed(2);
+                document.getElementById("hiddenTotalPrice").value = totalCartPrice.toFixed(2);
+                document.getElementById("hiddenDeliveryOptionName").value = deliveryOption.options[deliveryOption.selectedIndex].text;
+                document.getElementById("hiddenDeliveryOptionValue").value = deliveryOption.value;
             }
 
             function setHiddenInputs() {
-                const totalCartPrice = document.getElementById('totalCartPrice').textContent.replace('€ ', '');
-                const deliverySelect = document.getElementById('deliveryOption');
-                const deliveryOptionText = deliverySelect.options[deliverySelect.selectedIndex].text;
-                const deliveryCost = deliverySelect.value;
-
-                document.getElementById('hiddenTotalPrice').value = totalCartPrice;
-                document.getElementById('hiddenDeliveryOptionName').value = deliveryOptionText;
-                document.getElementById('hiddenDeliveryOptionValue').value = deliveryCost;
+                const deliveryOption = document.getElementById("deliveryOption");
+                document.getElementById("hiddenDeliveryOptionName").value = deliveryOption.options[deliveryOption.selectedIndex].text;
+                document.getElementById("hiddenDeliveryOptionValue").value = deliveryOption.value;
             }
 
             window.updateQuantity = updateQuantity;
             window.updatePrice = updatePrice;
             window.updateCartTotalPrice = updateCartTotalPrice;
+            window.setHiddenInputs = setHiddenInputs;
 
             updateCartTotalPrice();
         });
     </script>
-
 </body>
 </html>

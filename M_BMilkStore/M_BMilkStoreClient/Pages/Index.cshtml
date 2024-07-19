@@ -73,7 +73,10 @@
                                 @if (HttpContextAccessor.HttpContext.Session.GetString("UserRole") == "Customer")
                                 {
                                     <td>
-                                        <a class="btn btn-success" asp-page="./ShoppingCart/Cart" asp-route-id="@item.ProductId">Add to Cart</a>
+                                        <form method="post" asp-page="/ShoppingCart/Cart" asp-page-handler="AddToCart">
+                                            <input type="hidden" name="ProductId" value="@item.ProductId" />
+                                            <button type="submit" class="btn btn-success">Add to Cart</button>
+                                        </form>
                                     </td>
                                 }
                             </tr>

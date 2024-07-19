@@ -1,12 +1,12 @@
-﻿using BussinessObject;
-using Repository;
-using Repository.Interfaces;
-using Service.Interfaces;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BussinessObject;
+using Repository;
+using Repository.Interfaces;
+using Service.Interfaces;
 
 namespace Service
 {
@@ -49,5 +49,9 @@ namespace Service
             return await iProductLineRepository.GetProductLinesByProductId(productId);
         }
 
+        public async Task<int> GetRemainingQuantityByProductId(int productId)
+        {
+            return await iProductLineRepository.GetRemainingQuantityByProductId(productId);
+        }
     }
 }

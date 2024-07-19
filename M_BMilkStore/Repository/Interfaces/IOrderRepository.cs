@@ -16,5 +16,6 @@ namespace Repository.Interfaces
         Task<bool> UpdateOrderAsync(Order order);
         Task<bool> SoftDeleteOrderAsync(int orderId);
         Task<List<Order>> GetOrderHistoryByUserIdAsync(int userId);
+        Task<bool> RequestRefundAsync(int orderId, string refundMessage);
     }
 }

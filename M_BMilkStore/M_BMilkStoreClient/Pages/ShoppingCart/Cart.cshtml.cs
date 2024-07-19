@@ -3,18 +3,20 @@ using M_BMilkStoreClient.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Service.Interfaces;
-using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace M_BMilkStoreClient.Pages
 {
     public class CartModel : PageModel
     {
         private readonly IProductService _productService;
+        private readonly IProductLineService _lineService;
 
-        public CartModel(IProductService productService)
+        public CartModel(IProductService productService, IProductLineService lineService)
         {
             _productService = productService;
+            _lineService = lineService;
         }
 
         public IList<CartItem> Carts { get; set; } = new List<CartItem>();
@@ -26,43 +28,64 @@ namespace M_BMilkStoreClient.Pages
         [BindProperty]
         public string DeliveryOptionName { get; set; }
 
-
         [BindProperty]
         public float DeliveryOptionValue { get; set; }
-        public async Task OnGetAsync(int? id)
+
+        public void OnGet()
+        {
+            LoadCartFromSession();
+        }
+
+        public async Task<IActionResult> OnPostAddToCartAsync(int productId)
         {
             LoadCartFromSession();
 
-            if (id.HasValue)
+            int index = FindCartItemIndex(productId);
+
+            if (index == -1)
             {
-                int index = FindCartItemIndex(id.Value);
-                if (index == -1)
+                Product = await _productService.GetProductCartById(productId);
+                if (Product != null)
                 {
-                    Product = await _productService.GetProductCartById(id.Value);
-                    if (Product != null)
-                    {
-                        Carts.Add(new CartItem { Product = Product, Quantity = 1 });
-                    }
+                    Carts.Add(new CartItem { Product = Product, Quantity = 1 });
                 }
-                else
+            }
+            else
+            {
+                int remainingQuantity = await _lineService.GetRemainingQuantityByProductId(productId);
+                if (Carts[index].Quantity + 1 <= remainingQuantity)
                 {
                     Carts[index].Quantity++;
                 }
-
-                SaveCartToSession();
             }
+
+            SaveCartToSession();
+
+            return RedirectToPage();
         }
 
-        public void OnGetIncrease(int id)
+        public async Task<IActionResult> OnGetIncreaseAsync(int id)
         {
             LoadCartFromSession();
 
             int index = FindCartItemIndex(id);
             if (index != -1)
             {
-                Carts[index].Quantity++;
-                SaveCartToSession();
+                int remainingQuantity = await _lineService.GetRemainingQuantityByProductId(id);
+
+                if (Carts[index].Quantity + 1 <= remainingQuantity)
+                {
+                    Carts[index].Quantity++;
+                    SaveCartToSession();
+                    return new JsonResult(new { success = true });
+                }
+                else
+                {
+                    return new JsonResult(new { success = false, message = $"Only {remainingQuantity} items are available for this product." });
+                }
             }
+
+            return new JsonResult(new { success = false, message = "Product not found in the cart." });
         }
 
         public void OnGetDelete(int id)
@@ -82,13 +105,23 @@ namespace M_BMilkStoreClient.Pages
             LoadCartFromSession();
 
             int index = FindCartItemIndex(id);
-            if (index != -1 && quantity > 0)
+            if (index != -1 && quantity >= 0)
             {
-                Carts[index].Quantity = quantity;
-                SaveCartToSession();
+                int remainingQuantity = await _lineService.GetRemainingQuantityByProductId(id);
+
+                if (quantity <= remainingQuantity)
+                {
+                    Carts[index].Quantity = quantity;
+                    SaveCartToSession();
+                    return new JsonResult(new { success = true });
+                }
+                else
+                {
+                    return new JsonResult(new { success = false, message = $"Only {remainingQuantity} items are available for this product." });
+                }
             }
 
-            return RedirectToPage();
+            return new JsonResult(new { success = false, message = "Product not found." });
         }
 
         private int FindCartItemIndex(int id)
@@ -113,14 +146,12 @@ namespace M_BMilkStoreClient.Pages
             SessionService.SetSessionObjectAsJson(HttpContext.Session, "cart", Carts);
         }
 
-         public IActionResult OnPostProceedToCheckout()
+        public IActionResult OnPostProceedToCheckout()
         {
-            // Store the total price and delivery option in the session
             HttpContext.Session.SetString("TotalPrice", TotalPrice.ToString("F2"));
             HttpContext.Session.SetString("DeliveryOptionName", DeliveryOptionName);
             HttpContext.Session.SetString("DeliveryOptionValue", DeliveryOptionValue.ToString("F2"));
 
-            // Redirect to the checkout page
             return RedirectToPage("./Checkout");
         }
     }
