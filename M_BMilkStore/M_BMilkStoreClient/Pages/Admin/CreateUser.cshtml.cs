@@ -20,8 +20,18 @@ namespace M_BMilkStoreClient.Pages.Admin
         public User User { get; set; }
 
         public SelectList UserRoles { get; set; }
+        public string UserRole { get; private set; }
         public async Task<IActionResult> OnGetAsync()
         {
+            UserRole = HttpContext.Session.GetString("UserRole");
+            if (UserRole != "Admin")
+            {
+                return RedirectToPage("/Error");
+            }
+            if (UserRole == null)
+            {
+                return RedirectToPage("/Authenticate");
+            }
             UserRoles = new SelectList(await _roleService.GetAllUserRolesAsync(), "UserRoleId", "UserRoleName");
             return Page();
         }

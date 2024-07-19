@@ -23,10 +23,20 @@ namespace M_BMilkStoreClient.Pages.ManagementBrand
 
         public IList<ProductBrand> ProductBrand { get;set; } = default!;
         public string MessageError { get; set; } = string.Empty;
+        public string UserRole { get; private set; }
         public async Task<IActionResult> OnGetAsync()
         {
             try
             {
+                UserRole = HttpContext.Session.GetString("UserRole");
+                if (UserRole != "Staff")
+                {
+                    return RedirectToPage("/Error");
+                }
+                if (UserRole == null)
+                {
+                    return RedirectToPage("/Authenticate");
+                }
                 ProductBrand = await iProductBrandService.GetProductBrands();
                 return Page();
             }

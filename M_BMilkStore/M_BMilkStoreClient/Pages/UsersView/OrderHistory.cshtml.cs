@@ -14,8 +14,18 @@ namespace M_BMilkStoreClient.Pages.UsersView
             _orderService = orderService;
         }
         public IList<Order> Orders { get; set; }
+        public string UserRole { get; private set; }
         public async Task<IActionResult> OnGetAsync()
         {
+            UserRole = HttpContext.Session.GetString("UserRole");
+            if (UserRole != "Customer")
+            {
+                return RedirectToPage("/Error");
+            }
+            if (UserRole == null)
+            {
+                return RedirectToPage("/Authenticate");
+            }
             var userId = HttpContext.Session.GetInt32("UserId");
             if (userId == null)
             {
