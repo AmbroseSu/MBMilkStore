@@ -6,16 +6,6 @@
 
 @model BussinessObject.Order
 
-@{
-    var groupedOrderDetails = Model.ListOrderDetail
-        .GroupBy(item => item.Product?.Name)
-        .Select(g => new
-        {
-            ProductName = g.Key,
-            Quantity = g.Count(),
-            TotalPrice = g.Sum(item => item.ProductPrice)
-        });
-}
 
 <div class="container py-5 h-100">
     <div class="row d-flex justify-content-center align-items-center h-100">
@@ -46,19 +36,56 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var item in groupedOrderDetails)
+                                @{
+                                    decimal totalProductPrice = 0;
+                                }
+                                @foreach (var item in Model.ListOrderDetail)
                                 {
+                                    decimal itemTotal = (decimal)item.ProductQuantity * (decimal)item.ProductPrice;
+                                    totalProductPrice += itemTotal;
                                     <tr>
-                                        <td>@item.ProductName</td>
-                                        <td class="text-center">@item.Quantity</td>
-                                        <td class="text-end">€ @item.TotalPrice.ToString("0.00")</td>
+                                        <td>@item.Product.Name</td>
+                                        <td class="text-center">@item.ProductQuantity</td>
+                                        <td class="text-end">€ @item.ProductPrice.ToString("0.00")</td>
                                     </tr>
                                 }
                             </tbody>
                             <tfoot>
                                 <tr>
-                                    <td colspan="2" class="text-end">Total</td>
-                                    <td class="text-start">€ @Model.OrderTotalAmount.ToString("0.00")</td>
+                                    <td colspan="2" class="text-start">Total</td>
+                                    <td class="text-end">€ @totalProductPrice.ToString("0.00")</td>
+                                </tr>
+                                @if (Model.Voucher == null)
+                                {
+                                    decimal deliveryCharge = (decimal)Model.OrderTotalAmount - totalProductPrice;
+                                    string deliveryType = deliveryCharge switch
+                                    {
+                                        5m => "Standard Delivery : €5",
+                                        10m => "Express Delivery : €10",
+                                        _ => "Unknown"
+                                    };
+                                    <tr>
+                                        <td colspan="2" class="text-start">Delivery Type</td>
+                                        <td class="text-end">@deliveryType</td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    decimal deliveryCharge = (decimal)Model.OrderTotalAmount - totalProductPrice + Model.Voucher.VoucherValue;
+                                    string deliveryType = deliveryCharge switch
+                                    {
+                                        5m => "Standard Delivery",
+                                        10m => "Express Delivery",
+                                        _ => "Unknown"
+                                    };
+                                    <tr>
+                                        <td colspan="2" class="text-start">Delivery Type</td>
+                                        <td class="text-end">@deliveryType</td>
+                                    </tr>
+                                }
+                                <tr>
+                                    <td colspan="2" class="text-start">Grand Total</td>
+                                    <td class="text-end">€ @Model.OrderTotalAmount.ToString("0.00")</td>
                                 </tr>
                             </tfoot>
                         </table>
