@@ -89,7 +89,7 @@ namespace M_BMilkStoreClient.Pages.ShoppingCart
         public async Task<IActionResult> OnGetAsync()
         {
             UserRole = HttpContext.Session.GetString("UserRole");
-            if (UserRole != "Staff")
+            if (UserRole != "Customer"&&UserRole!=null)
             {
                 return RedirectToPage("/Error");
             }
