@@ -152,10 +152,9 @@ namespace DataAccessLayer
                     )
                     .ToListAsync();
 
-                int totalQuantityIn = productLines.Sum(pl => pl.QuantityIn);
                 int totalQuantityOut = productLines.Sum(pl => pl.QuantityOut);
 
-                return totalQuantityIn - totalQuantityOut;
+                return totalQuantityOut;
             }
             catch (Exception ex)
             {

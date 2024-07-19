@@ -68,7 +68,7 @@
                                                     <button class="btn btn-link px-2" onclick="updateQuantity(@cartItem.Product.ProductId, -1, @cartItem.Product.Price)">
                                                         <i class="fas fa-minus"></i>
                                                     </button>
-                                                    <input id="quantityInput-@cartItem.Product.ProductId" min="1" name="quantity" value="@cartItem.Quantity" type="number" class="form-control form-control-sm" oninput="updatePrice(@cartItem.Product.ProductId, @cartItem.Product.Price)">
+                                                    <input id="quantityInput-@cartItem.Product.ProductId" min="1" name="quantity" value="@cartItem.Quantity" type="number" class="form-control form-control-sm" oninput="updatePrice(@cartItem.Product.ProductId, @cartItem.Product.Price)" readonly>
                                                     <button class="btn btn-link px-2" onclick="updateQuantity(@cartItem.Product.ProductId, 1, @cartItem.Product.Price)">
                                                         <i class="fas fa-plus"></i>
                                                     </button>
