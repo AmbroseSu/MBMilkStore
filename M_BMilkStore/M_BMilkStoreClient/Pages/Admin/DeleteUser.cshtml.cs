@@ -16,9 +16,18 @@ namespace M_BMilkStoreClient.Pages.Admin
 
         [BindProperty]
         public User User { get; set; }
-
+        public string UserRole { get; private set; }
         public async Task<IActionResult> OnGetAsync(int id)
         {
+            UserRole = HttpContext.Session.GetString("UserRole");
+            if (UserRole != "Admin" && UserRole != null)
+            {
+                return RedirectToPage("/Error");
+            }
+            if (UserRole == null)
+            {
+                return RedirectToPage("/Authenticate");
+            }
             User = await _userService.GetUserByID(id);
 
             if (User == null)

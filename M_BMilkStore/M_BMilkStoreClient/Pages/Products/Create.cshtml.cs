@@ -19,10 +19,19 @@ namespace M_BMilkStoreClient.Pages.Products
         {
             _productService = productService;
         }
-
-        public async Task<IActionResult> OnGet()
+        public string UserRole { get; private set; }
+        public async Task<IActionResult> OnGetAsync()
         {
-        ViewData["ProductBrandId"] = new SelectList(await _productService.GetAllProductBrand(), "ProductBrandId", "Name");
+            UserRole = HttpContext.Session.GetString("UserRole");
+            if (UserRole != "Staff"&&UserRole!=null)
+            {
+                return RedirectToPage("/Error");
+            }
+            if (UserRole == null)
+            {
+                return RedirectToPage("/Authenticate");
+            }
+            ViewData["ProductBrandId"] = new SelectList(await _productService.GetAllProductBrand(), "ProductBrandId", "Name");
         ViewData["ProductCategoryId"] = new SelectList(await _productService.GetAllProductCategory(), "ProductCategoryId", "Name");
             return Page();
         }

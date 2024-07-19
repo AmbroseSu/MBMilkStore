@@ -14,7 +14,7 @@ namespace M_BMilkStoreClient.Pages.ManagementVoucher
     public class DeleteModel : PageModel
     {
         private readonly IVoucherService _voucherService;
-        public bool IsAdmin => HttpContext.Session.GetString("UserRole") == "Admin";
+       
         public DeleteModel(IVoucherService voucherService)
         {
             _voucherService = voucherService;
@@ -23,12 +23,20 @@ namespace M_BMilkStoreClient.Pages.ManagementVoucher
         [BindProperty]
         public Voucher Voucher { get; set; } = default!;
         public string MessageError { get; set; } = string.Empty;
+        public string UserRole { get; private set; }
         public async Task<IActionResult> OnGetAsync(int id)
         {
-            if(IsAdmin)
+            UserRole = HttpContext.Session.GetString("UserRole");
+            if (UserRole != "Admin" && UserRole != null)
             {
+                return RedirectToPage("/Error");
+            }
+            if (UserRole == null)
+            {
+                return RedirectToPage("/Authenticate");
+            }
 
-                if (id == 0)
+            if (id == 0)
                 {
                     return NotFound();
                 }
@@ -43,19 +51,12 @@ namespace M_BMilkStoreClient.Pages.ManagementVoucher
                     Voucher = voucher;
                 }
                 return Page();
-            }
-            else
-            {
-                return RedirectToPage("/Authenticate");
-            }
+            
         }
 
         public async Task<IActionResult> OnPostAsync(int id)
         {
-            if (!IsAdmin)
-            {
-                return RedirectToPage("/Authenticate");
-            }
+            
             try
             {
                 if (id == 0)

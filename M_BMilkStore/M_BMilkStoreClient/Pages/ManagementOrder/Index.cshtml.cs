@@ -24,11 +24,16 @@ namespace M_BMilkStoreClient.Pages.ManagementOrder
         public IList<Order> Orders { get; set; } = new List<Order>();
         public int CurrentPage { get; private set; } = 1;
         public int TotalPages { get; private set; }
-        public bool IsStaff => HttpContext.Session.GetString("UserRole") == "Staff";
 
+        public string UserRole { get; private set; }
         public async Task<IActionResult> OnGetAsync(int pageNumber = 1)
         {
-            if (!IsStaff)
+            UserRole = HttpContext.Session.GetString("UserRole");
+            if (UserRole != "Staff" && UserRole != null)
+            {
+                return RedirectToPage("/Error");
+            }
+            if (UserRole == null)
             {
                 return RedirectToPage("/Authenticate");
             }

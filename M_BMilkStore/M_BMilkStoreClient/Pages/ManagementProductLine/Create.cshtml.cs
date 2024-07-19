@@ -23,11 +23,19 @@ namespace M_BMilkStoreClient.Pages.ManagementProductLine
             iProductLineService = new ProductLineService();
             iProductService = new ProductService();
         }
-
-        public async Task<IActionResult> OnGet(int productId)
+        public string UserRole { get; private set; }
+        public async Task<IActionResult> OnGetAsync(int productId)
         {
-
-                ProductLine = new ProductLine { ProductId = productId };
+            UserRole = HttpContext.Session.GetString("UserRole");
+            if (UserRole != "Staff" && UserRole != null)
+            {
+                return RedirectToPage("/Error");
+            }
+            if (UserRole == null)
+            {
+                return RedirectToPage("/Authenticate");
+            }
+            ProductLine = new ProductLine { ProductId = productId };
             
             ViewData["ProductId"] = new SelectList(new List<Product> { await iProductService.GetProductById(productId) }, "ProductId", "Name");
             return Page();

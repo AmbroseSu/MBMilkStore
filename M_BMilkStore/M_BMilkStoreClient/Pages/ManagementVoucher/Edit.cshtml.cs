@@ -15,7 +15,7 @@ namespace M_BMilkStoreClient.Pages.ManagementVoucher
     public class EditModel : PageModel
     {
         private readonly IVoucherService _voucherService;
-        public bool IsAdmin => HttpContext.Session.GetString("UserRole") == "Admin";
+        
         public EditModel(IVoucherService voucherService)
         {
             _voucherService = voucherService;
@@ -23,12 +23,20 @@ namespace M_BMilkStoreClient.Pages.ManagementVoucher
 
         [BindProperty]
         public Voucher Voucher { get; set; } = default!;
-
+        public string UserRole { get; private set; }
         public async Task<IActionResult> OnGetAsync(int id)
         {
-            if (IsAdmin)
+            UserRole = HttpContext.Session.GetString("UserRole");
+            if (UserRole != "Admin" && UserRole != null)
             {
-                if (id == 0)
+                return RedirectToPage("/Error");
+            }
+            if (UserRole == null)
+            {
+                return RedirectToPage("/Authenticate");
+            }
+
+            if (id == 0)
                 {
                     return NotFound();
                 }
@@ -38,11 +46,7 @@ namespace M_BMilkStoreClient.Pages.ManagementVoucher
                     return NotFound();
                 }
                 return Page();
-            }
-            else
-            {
-                return Redirect("/Authenticate");
-            }
+            
         }
 
         // To protect from overposting attacks, enable the specific properties you want to bind to.

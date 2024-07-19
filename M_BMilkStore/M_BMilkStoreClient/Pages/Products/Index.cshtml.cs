@@ -31,9 +31,18 @@ namespace M_BMilkStoreClient.Pages.Products
 
         [BindProperty(SupportsGet = true)]
         public string SearchString { get; set; }
-
+        public string UserRole { get; private set; }
         public async Task<IActionResult> OnGetAsync(int? pageIndex)
         {
+            UserRole = HttpContext.Session.GetString("UserRole");
+            if (UserRole != "Staff" && UserRole != null)
+            {
+                return RedirectToPage("/Error");
+            }
+            if (UserRole == null)
+            {
+                return RedirectToPage("/Authenticate");
+            }
             PageIndex = pageIndex ?? 1;
 
             var pagedResult = await _productService.GetProductsPagedAsync(PageIndex, PageSize, SearchString);

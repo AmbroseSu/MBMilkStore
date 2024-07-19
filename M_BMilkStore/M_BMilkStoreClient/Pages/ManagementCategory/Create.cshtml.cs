@@ -31,6 +31,20 @@ namespace M_BMilkStoreClient.Pages.ManagementCategory
         public ProductCategory ProductCategory { get; set; } = default!;
 
         public string MessageError { get; set; } = string.Empty;
+        public string UserRole { get; private set; }
+        public async Task<IActionResult> OnGetAsync()
+        {
+            UserRole = HttpContext.Session.GetString("UserRole");
+            if (UserRole != "Staff" && UserRole != null)
+            {
+                return RedirectToPage("/Error");
+            }
+            if (UserRole == null)
+            {
+                return RedirectToPage("/Authenticate");
+            }
+            return Page();
+        }
 
         // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
         public async Task<IActionResult> OnPostAsync()

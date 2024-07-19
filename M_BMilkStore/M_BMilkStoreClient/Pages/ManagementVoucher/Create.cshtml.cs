@@ -15,15 +15,21 @@ namespace M_BMilkStoreClient.Pages.ManagementVoucher
     public class CreateModel : PageModel
     {
         private readonly IVoucherService _voucherService;
-        public bool IsAdmin => HttpContext.Session.GetString("UserRole") == "Admin";
+        
         public CreateModel(IVoucherService voucherService)
         {
             _voucherService = voucherService;
         }
 
-        public IActionResult OnGet()
+        public string UserRole { get; private set; }
+        public async Task<IActionResult> OnGetAsync()
         {
-            if (!IsAdmin)
+            UserRole = HttpContext.Session.GetString("UserRole");
+            if (UserRole != "Admin"&&UserRole!=null)
+            {
+                return RedirectToPage("/Error");
+            }
+            if (UserRole == null)
             {
                 return RedirectToPage("/Authenticate");
             }
@@ -37,10 +43,7 @@ namespace M_BMilkStoreClient.Pages.ManagementVoucher
         // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
         public async Task<IActionResult> OnPostAsync()
         {
-            if (!IsAdmin)
-            {
-                return RedirectToPage("/Authenticate");
-            }
+            
             if (!ModelState.IsValid)
             {
                 return Page();

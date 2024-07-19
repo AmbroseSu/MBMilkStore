@@ -25,11 +25,20 @@ namespace M_BMilkStoreClient.Pages.ManagementCategory
         public ProductCategory ProductCategory { get; set; } = default!;
 
         public string MessageError { get; set; } = string.Empty;
-
+        public string UserRole { get; private set; }
         public async Task<IActionResult> OnGetAsync(int id)
         {
             try
             {
+                UserRole = HttpContext.Session.GetString("UserRole");
+                if (UserRole != "Staff"&&UserRole!=null)
+                {
+                    return RedirectToPage("/Error");
+                }
+                if (UserRole == null)
+                {
+                    return RedirectToPage("/Authenticate");
+                }
                 if (id == null)
                 {
                     return NotFound();

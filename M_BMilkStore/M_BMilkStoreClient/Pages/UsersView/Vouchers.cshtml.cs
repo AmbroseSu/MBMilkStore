@@ -14,9 +14,20 @@ namespace M_BMilkStoreClient.Pages.UsersView
             _voucherService = voucherService;
         }
         public List<Voucher> Vouchers { get; set; }
-        public async Task OnGetAsync()
+        public string UserRole { get; private set; }
+        public async Task<IActionResult> OnGetAsync()
         {
+            UserRole = HttpContext.Session.GetString("UserRole");
+            if (UserRole != "Customer" && UserRole != null)
+            {
+                return RedirectToPage("/Error");
+            }
+            if (UserRole == null)
+            {
+                return RedirectToPage("/Authenticate");
+            }
             Vouchers = await VoucherDAO.Instance.GetAllCurrentVouchersAsync();
+            return Page();
         }
     }
 }

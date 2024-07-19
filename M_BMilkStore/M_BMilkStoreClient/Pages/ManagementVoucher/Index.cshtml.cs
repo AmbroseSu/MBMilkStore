@@ -16,7 +16,7 @@ namespace M_BMilkStoreClient.Pages.ManagementVoucher
     {
 
         private readonly IVoucherService _voucherService;
-        public bool IsAdmin => HttpContext.Session.GetString("UserRole") == "Admin";
+        
         public IndexModel(IVoucherService voucherService)
         {
             _voucherService = voucherService;
@@ -26,23 +26,27 @@ namespace M_BMilkStoreClient.Pages.ManagementVoucher
         public int PageNumber { get; private set; } = 1;
         public int CurrentPage { get; set; }
         public int TotalPages { get; private set; }
-
-        public async Task OnGetAsync(int pageNumber = 1)
+        public string UserRole { get; private set; }
+        public async Task<IActionResult> OnGetAsync(int pageNumber = 1)
         {
-           if(IsAdmin)
+            UserRole = HttpContext.Session.GetString("UserRole");
+            if (UserRole != "Admin" && UserRole != null)
             {
-                PageNumber = pageNumber;
+                return RedirectToPage("/Error");
+            }
+            if (UserRole == null)
+            {
+                return RedirectToPage("/Authenticate");
+            }
+            PageNumber = pageNumber;
                 int pageSize = 5;
                 Vouchers = await VoucherDAO.Instance.GetVouchersAsync(pageNumber, pageSize);
 
                 int totalVouchers = await _voucherService.GetVoucherCountAsync();
                 TotalPages = (int)Math.Ceiling(totalVouchers / (double)pageSize);
                 CurrentPage = pageNumber;
-            }
-           else
-            {
-                Response.Redirect("/Authenticate");
-            }
+            return Page();
+           
         }
     }
 }
