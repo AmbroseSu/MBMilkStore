@@ -37,5 +37,10 @@ namespace Repository
         {
             return OrderDAO.Instance.GetOrderHistoryByUserIdAsync(userId);
         }
+
+        public Task<bool> RequestRefundAsync(int orderId, string refundMessage)
+        {
+            return OrderDAO.Instance.RequestRefundAsync(orderId, refundMessage);
+        }
     }
 }

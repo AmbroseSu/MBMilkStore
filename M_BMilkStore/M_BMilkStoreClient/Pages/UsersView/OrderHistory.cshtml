@@ -13,13 +13,14 @@
             <th>Total Amount</th>
             <th>Voucher</th>
             <th>Status</th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
         @if (Model.Orders == null || !Model.Orders.Any())
         {
             <tr>
-                <td colspan="4" class="text-center">No Orders</td>
+                <td colspan="5" class="text-center">No Orders</td>
             </tr>
         }
         else
@@ -40,8 +41,49 @@
                             <span class="badge bg-danger">Pending</span>
                         }
                     </td>
+                    <td>
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#orderDetailsModal" onclick="showOrderDetails(@order.OrderId)">View Details</button>
+                    </td>
                 </tr>
             }
         }
     </tbody>
 </table>
+
+<div class="modal fade" id="orderDetailsModal" tabindex="-1" aria-labelledby="orderDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="orderDetailsModalLabel">Order Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="orderDetailsContent">
+                <!-- Content will be loaded via AJAX -->
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function showOrderDetails(orderId) {
+            console.log("Fetching details for order:", orderId);
+            var url = '/UsersView/OrderHistory?orderId=' + orderId + '&handler=OrderDetails';
+            console.log("Fetching URL:", url);
+            fetch(url, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+                .then(response => {
+                    console.log("Response:", response);
+                    return response.text();
+                })
+                .then(data => {
+                    console.log("Data received:", data);
+                    document.getElementById('orderDetailsContent').innerHTML = data;
+                })
+                .catch(error => console.log('Error:', error));
+        }
+    </script>
+}

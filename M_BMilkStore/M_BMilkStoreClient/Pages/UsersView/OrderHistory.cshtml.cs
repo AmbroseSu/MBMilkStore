@@ -24,5 +24,21 @@ namespace M_BMilkStoreClient.Pages.UsersView
             Orders = await _orderService.GetOrderHistoryByUserIdAsync(userId.Value);
             return Page();
         }
+
+        public async Task<IActionResult> OnGetOrderDetailsAsync(int orderId)
+        {
+            var order = await _orderService.GetOrderByIdAsync(orderId);
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                return Partial("_OrderDetails", order);
+            }
+
+            return Page();
+        }
     }
 }

@@ -42,5 +42,9 @@ namespace Service
         {
             return _repository.GetOrderHistoryByUserIdAsync(userId);
         }
+        public Task<bool> RequestRefundAsync(int orderId, string refundMessage)
+        {
+            return _repository.RequestRefundAsync(orderId, refundMessage);
+        }
     }
 }

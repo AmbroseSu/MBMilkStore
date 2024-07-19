@@ -125,7 +125,7 @@ namespace DataAccessLayer
                 e.ToTable("ProductLine");
                 e.HasKey(x => x.ProductLineId);
                 e.Property(x => x.QuantityIn);
-                e.Property(x => x.Quantity);
+                e.Property(x => x.QuantityOut);
                 e.Property(x => x.ExpiredDate);
                 e.HasOne(x => x.Product)
                     .WithMany(x => x.ListProductLine)

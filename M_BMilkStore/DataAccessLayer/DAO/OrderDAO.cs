@@ -195,5 +195,30 @@ namespace DataAccessLayer.DAO
             }
         }
 
+        public async Task<bool> RequestRefundAsync(int orderId, string refundMessage)
+        {
+            try
+            {
+                using (var context = new M_BMilkStoreDBContext())
+                {
+                    var order = await context.Orders.FirstOrDefaultAsync(o => o.OrderId == orderId);
+                    if (order == null || order.RefundStatus != RefundStatus.None)
+                    {
+                        return false;
+                    }
+
+                    order.RefundStatus = RefundStatus.Requested;
+                    order.RefundRequestDate = DateTime.Now;
+                    order.RefundMessage = refundMessage;
+
+                    await context.SaveChangesAsync();
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Request Refund Failed: " + ex.Message);
+            }
+        }
     }
 }
