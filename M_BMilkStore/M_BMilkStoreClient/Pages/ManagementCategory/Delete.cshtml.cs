@@ -15,10 +15,12 @@ namespace M_BMilkStoreClient.Pages.ManagementCategory
     public class DeleteModel : PageModel
     {
         private readonly IProductCategoryService iProductCategoryService;
-
+        private readonly IProductService iProductService;
+  
         public DeleteModel()
         {
             iProductCategoryService = new ProductCategoryService();
+            iProductService = new ProductService();
         }
 
         [BindProperty]
@@ -65,6 +67,13 @@ namespace M_BMilkStoreClient.Pages.ManagementCategory
                 }
 
                 var productcategory = await iProductCategoryService.GetProductCategoryById(id);
+                var product = await iProductService.GetProductByCategoryId(id);
+                if (product.Count != 0)
+                {
+                    ProductCategory = productcategory;
+                    MessageError = "There are products that are using categories. Can not delete Category";
+                    return Page();
+                }
                 if (productcategory != null)
                 {
                     ProductCategory = productcategory;

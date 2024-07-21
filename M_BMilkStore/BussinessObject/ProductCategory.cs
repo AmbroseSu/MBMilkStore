@@ -14,6 +14,7 @@ namespace BussinessObject
         [Key]
         public int ProductCategoryId { get; set; }
         public string Name { get; set; }
+        public Boolean Status { get; set; }
         public virtual ICollection<Product> ListProduct { get; set; } = new List<Product>();
     }
 }

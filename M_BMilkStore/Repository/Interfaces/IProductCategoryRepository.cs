@@ -18,6 +18,5 @@ namespace Repository.Interfaces
         Task DeleteProductCategory(ProductCategory productCategory);
 
         Task<ProductCategory> GetProductCategoryById(int productCategoryId);
-
     }
 }

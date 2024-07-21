@@ -34,7 +34,7 @@ namespace DataAccessLayer
             try
             {
                 using var context = new M_BMilkStoreDBContext();
-                listProductBrands = context.ProductBrands.ToList();
+                listProductBrands = context.ProductBrands.Where(c => c.Status == true).ToList();
 
             }catch (Exception ex)
             {
@@ -48,6 +48,7 @@ namespace DataAccessLayer
             try
             {
                 using var context = new M_BMilkStoreDBContext();
+                productBrand.Status = true;
                 context.ProductBrands.Add(productBrand);
                 context.SaveChanges();
 
@@ -84,7 +85,9 @@ namespace DataAccessLayer
                 }
                 else
                 {
-                    context.ProductBrands.Remove(probr);
+                    probr.Status = false;
+                    context.Entry<ProductBrand>(probr).State
+                    = Microsoft.EntityFrameworkCore.EntityState.Modified;
                     context.SaveChanges();
                 }
                 
@@ -100,7 +103,7 @@ namespace DataAccessLayer
         public async Task<ProductBrand> GetProductBrandById(int productBrandId)
         {
             using var context = new M_BMilkStoreDBContext();
-            return context.ProductBrands.FirstOrDefault(probr => probr.ProductBrandId.Equals(productBrandId));
+            return context.ProductBrands.FirstOrDefault(probr => probr.ProductBrandId.Equals(productBrandId) && probr.Status == true);
         }
 
 

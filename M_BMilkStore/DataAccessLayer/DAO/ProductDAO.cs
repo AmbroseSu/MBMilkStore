@@ -210,5 +210,39 @@ namespace DataAccessLayer.DAO
                 TotalItems = totalItems
             };
         }
+
+        public async Task<List<Product>> GetProductByCategoryId(int categoryId)
+        {
+            try
+            {
+                using var context = new M_BMilkStoreDBContext();
+                return await context.Products
+                    .Where(p => p.ProductCategoryId == categoryId && (p.Status ?? false) && (!p.IsDeleted ?? true))
+                    .Include(p => p.ProductBrand)
+                    .Include(p => p.ProductCategory)
+                    .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        public async Task<List<Product>> GetProductByBrandId(int brandId)
+        {
+            try
+            {
+                using var context = new M_BMilkStoreDBContext();
+                return await context.Products
+                    .Where(p => p.ProductBrandId == brandId && (p.Status ?? false) && (!p.IsDeleted ?? true))
+                    .Include(p => p.ProductBrand)
+                    .Include(p => p.ProductCategory)
+                    .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
     }
 }

@@ -15,10 +15,12 @@ namespace M_BMilkStoreClient.Pages.ManagementBrand
     public class DeleteModel : PageModel
     {
         private readonly IProductBrandService iProductBrandService;
+        private readonly IProductService iProductService;
 
         public DeleteModel()
         {
             iProductBrandService = new ProductBrandService();
+            iProductService = new ProductService();
         }
 
         [BindProperty]
@@ -63,8 +65,14 @@ namespace M_BMilkStoreClient.Pages.ManagementBrand
                 {
                     return NotFound();
                 }
-
+                var product = await iProductService.GetProductByBrandId(id);
                 var productbrand = await iProductBrandService.GetProductBrandById(id);
+                if(product.Count != 0)
+                {
+                    ProductBrand = productbrand;
+                    MessageError = "There are products that are using brands. Can not delete.";
+                    return Page();
+                }
                 if (productbrand != null)
                 {
                     ProductBrand = productbrand;

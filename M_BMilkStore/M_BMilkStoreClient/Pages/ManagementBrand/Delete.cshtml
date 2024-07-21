@@ -11,6 +11,12 @@
 <div>
     <h4>ProductBrand</h4>
     <hr />
+    @if (!string.IsNullOrEmpty(Model.MessageError))
+    {
+        <div class="alert alert-danger" role="alert">
+            @Model.MessageError
+        </div>
+    }
     <dl class="row">
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.ProductBrand.Name)

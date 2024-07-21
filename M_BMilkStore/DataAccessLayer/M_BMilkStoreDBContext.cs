@@ -158,6 +158,7 @@ namespace DataAccessLayer
                 e.ToTable("ProductBrand");
                 e.HasKey(x => x.ProductBrandId);
                 e.Property(x => x.Name);
+                e.Property(x => x.Status);
             });
 
             modelBuilder.Entity<ProductCategory>(e =>
@@ -165,6 +166,7 @@ namespace DataAccessLayer
                 e.ToTable("ProductCategory");
                 e.HasKey(x => x.ProductCategoryId);
                 e.Property(x => x.Name);
+                e.Property(x => x.Status);
             });
 
             modelBuilder.Entity<UserVoucher>(e =>

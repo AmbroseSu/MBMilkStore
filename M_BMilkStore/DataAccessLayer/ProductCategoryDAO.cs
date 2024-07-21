@@ -36,7 +36,7 @@ namespace DataAccessLayer
             {
                 
                 using var context = new M_BMilkStoreDBContext();
-                listProductCategories = context.ProductCategories.ToList();
+                listProductCategories = context.ProductCategories.Where(c => c.Status == true).ToList();
                 
             }
             catch (Exception ex)
@@ -51,6 +51,7 @@ namespace DataAccessLayer
             try
             {
                 using var context = new M_BMilkStoreDBContext();
+                productCategory.Status = true;
                 context.ProductCategories.Add(productCategory);
                 context.SaveChanges();
                 
@@ -89,7 +90,9 @@ namespace DataAccessLayer
                 }
                 else
                 {
-                    context.ProductCategories.Remove(proca);
+                    proca.Status = false;
+                    context.Entry<ProductCategory>(proca).State
+                    = Microsoft.EntityFrameworkCore.EntityState.Modified;
                     context.SaveChanges();
                 }
                 
@@ -105,7 +108,7 @@ namespace DataAccessLayer
             try
             {
                 using var context = new M_BMilkStoreDBContext();
-                return context.ProductCategories.FirstOrDefault(prca => prca.ProductCategoryId.Equals(productCategoryId));
+                return context.ProductCategories.FirstOrDefault(prca => prca.ProductCategoryId.Equals(productCategoryId) && prca.Status == true);
             }catch (Exception ex)
             {
                 throw new Exception(ex.Message);

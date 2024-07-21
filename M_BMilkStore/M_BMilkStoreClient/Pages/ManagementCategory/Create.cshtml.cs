@@ -22,10 +22,6 @@ namespace M_BMilkStoreClient.Pages.ManagementCategory
             iProductCategoryService = new ProductCategoryService();
         }
 
-        public IActionResult OnGet()
-        {
-            return Page();
-        }
 
         [BindProperty]
         public ProductCategory ProductCategory { get; set; } = default!;

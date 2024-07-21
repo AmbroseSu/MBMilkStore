@@ -62,5 +62,15 @@ namespace Service
         {
             return await iProductRepository.GetProductsPagedAsync(pageIndex, pageSize, searchString);
         }
+
+        public Task<List<Product>> GetProductByCategoryId(int categoryId)
+        {
+            return iProductRepository.GetProductByCategoryId(categoryId);
+        }
+
+        public Task<List<Product>> GetProductByBrandId(int brandId)
+        {
+            return iProductRepository.GetProductByBrandId(brandId);
+        }
     }
 }

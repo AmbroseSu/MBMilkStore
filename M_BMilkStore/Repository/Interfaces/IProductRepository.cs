@@ -19,6 +19,8 @@ namespace Repository.Interfaces
         Task DeleteProduct(int id);
         Task UpdateProduct(Product product);
         Task<PageResult<Product>> GetProductsPagedAsync(int pageIndex, int pageSize, string searchString);
+        Task<List<Product>> GetProductByCategoryId(int categoryId);
+        Task<List<Product>> GetProductByBrandId(int brandId);
 
     }
 }
