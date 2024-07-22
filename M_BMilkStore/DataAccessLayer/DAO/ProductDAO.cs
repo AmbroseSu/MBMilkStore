@@ -180,7 +180,11 @@ namespace DataAccessLayer.DAO
         public async Task<PageResult<Product>> GetProductsPagedAsync(int pageIndex, int pageSize, string searchString)
         {
             using var context = new M_BMilkStoreDBContext();
-            var query = context.Products.Include(x=>x.ProductBrand).Include(x=>x.ProductCategory).AsQueryable();
+            var query = context.Products
+                .Where(p => p.Status == true && p.IsDeleted == false)
+                .Include(x=>x.ProductBrand)
+                .Include(x=>x.ProductCategory)
+                .AsQueryable();
 
             if (!string.IsNullOrEmpty(searchString))
             {
